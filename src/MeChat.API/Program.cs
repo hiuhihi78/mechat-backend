@@ -10,8 +10,6 @@ using MeChat.Infrastucture.Service.DependencyInjection.Extentions;
 using MeChat.Infrastucture.Storage.DependencyInjection.Extentions;
 using MeChat.Infrastucture.MessageBroker.Producer.Email.DependencyInjection.Extentions;
 using MeChat.Infrastructure.RealTime.DependencyInjection.Extentions;
-using MeChat.Infrastructure.RealTime.Hubs;
-using MeChat.Common.Shared.Constants;
 
 namespace MeChat.API;
 
@@ -26,10 +24,16 @@ public class Program
         //Add Cors
         builder.Services.AddCors(options =>
         {
-            var origins = builder.Configuration.GetSection("CorsOrigns").Get<string[]>()!;
+            //var origins = builder.Configuration.GetSection("CorsOrigns").Get<string[]>()!;
+            //options.AddDefaultPolicy(policy =>
+            //{
+            //    policy.WithOrigins(origins).AllowCredentials().AllowAnyHeader().AllowAnyMethod();
+            //});
+
+            // Allow all origin
             options.AddDefaultPolicy(policy =>
             {
-                policy.WithOrigins(origins).AllowCredentials().AllowAnyHeader().AllowAnyMethod();
+                policy.AllowCredentials().AllowAnyHeader().AllowAnyMethod();
             });
         });
 
