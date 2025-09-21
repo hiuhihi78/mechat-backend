@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace MeChat.Infrastucture.MessageBroker.Consumer.Email;
+namespace MeChat.Infrastucture.MessageBroker.Consumer;
 
 public class AssemblyReference
 {

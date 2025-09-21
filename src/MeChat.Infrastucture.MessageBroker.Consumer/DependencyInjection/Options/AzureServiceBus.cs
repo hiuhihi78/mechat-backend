@@ -1,4 +1,4 @@
-﻿namespace MeChat.Infrastucture.MessageBroker.Consumer.Email.DependencyInjection.Options;
+﻿namespace MeChat.Infrastucture.MessageBroker.Consumer.DependencyInjection.Options;
 
 public sealed class AzureServiceBus
 {

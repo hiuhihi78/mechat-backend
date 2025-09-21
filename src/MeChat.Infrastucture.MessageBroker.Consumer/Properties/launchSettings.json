@@ -3,7 +3,8 @@
     "MeChat.Consumer.Email": {
       "commandName": "Project",
       "environmentVariables": {
-        "DOTNET_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development"
+        //"ASPNETCORE_ENVIRONMENT": "Production"
       }
     }
   }

@@ -1,9 +1,9 @@
-using MeChat.Infrastucture.MessageBroker.Consumer.Email.DependencyInjection.Extentions;
+using MeChat.Infrastucture.MessageBroker.Consumer.DependencyInjection.Extentions;
 using MeChat.Infrastucture.Service.DependencyInjection.Extentions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace MeChat.Infrastucture.MessageBroker.Consumer.Email;
+namespace MeChat.Infrastucture.MessageBroker.Consumer;
 
 public class Program
 {

@@ -8,7 +8,7 @@ using MeChat.Infrastucture.DistributedCache.DependencyInjection.Extentions;
 using System.Text.Json.Serialization;
 using MeChat.Infrastucture.Service.DependencyInjection.Extentions;
 using MeChat.Infrastucture.Storage.DependencyInjection.Extentions;
-using MeChat.Infrastucture.MessageBroker.Producer.Email.DependencyInjection.Extentions;
+using MeChat.Infrastucture.MessageBroker.Producer.DependencyInjection.Extentions;
 using MeChat.Infrastructure.RealTime.DependencyInjection.Extentions;
 
 namespace MeChat.API;

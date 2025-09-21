@@ -2,7 +2,7 @@
 using MeChat.Common.Abstractions.Services;
 using MeChat.Common.MessageBroker.Email;
 
-namespace MeChat.Infrastucture.MessageBroker.Consumer.Email.UseCases.Commands;
+namespace MeChat.Infrastucture.MessageBroker.Consumer.UseCases.Commands;
 
 public class SendEmailConsumerHandler : ICommandMessageHandler<Command.SendEmail>
 {

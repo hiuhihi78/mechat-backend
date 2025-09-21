@@ -28,10 +28,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Presentation", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Architecture.Tests", "test\MeChat.Architecture.Tests\MeChat.Architecture.Tests.csproj", "{FC1337F3-3EAE-4490-A880-7745E22D0E14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Infrastucture.MessageBroker.Producer.Email", "src\MeChat.Infrastucture.MessageBroker.Producer.Email\MeChat.Infrastucture.MessageBroker.Producer.Email.csproj", "{6BEB1053-15AA-466C-8B94-B7E068517E0D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Infrastucture.MessageBroker.Consumer.Email", "src\MeChat.Infrastucture.MessageBroker.Consumer.Email\MeChat.Infrastucture.MessageBroker.Consumer.Email.csproj", "{AFCA8915-B41D-49D1-8CB0-466D08B81C56}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Infrastucture.DistributedCache", "src\MeChat.Infrastucture.DistributedCache\MeChat.Infrastucture.DistributedCache.csproj", "{03C11314-1B5C-40F1-A463-5A7050F127E0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Infrastucture.Storage", "src\MeChat.Infrastucture.Storage\MeChat.Infrastucture.Storage.csproj", "{DC11E763-E5E4-43FA-81C9-DA34A24BBAA8}"
@@ -40,7 +36,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Infrastucture.Data.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Infrastucture.Service", "src\MeChat.Infrastucture.Service\MeChat.Infrastucture.Service.csproj", "{4C3E105A-61E3-4AD8-955D-0251611395C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeChat.Infrastucture.RealTime", "src\MeChat.Infrastucture.RealTime\MeChat.Infrastucture.RealTime.csproj", "{9CBCC9FF-DA77-4D55-9689-8421C3561E7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Infrastucture.RealTime", "src\MeChat.Infrastucture.RealTime\MeChat.Infrastucture.RealTime.csproj", "{9CBCC9FF-DA77-4D55-9689-8421C3561E7F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Infrastucture.MessageBroker.Consumer", "src\MeChat.Infrastucture.MessageBroker.Consumer\MeChat.Infrastucture.MessageBroker.Consumer.csproj", "{22E9C7E6-2853-4E17-9ED1-C0ED65518696}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeChat.Infrastucture.MessageBroker.Producer", "src\MeChat.Infrastucture.MessageBroker.Producer\MeChat.Infrastucture.MessageBroker.Producer.csproj", "{B930C70D-8E3B-434E-AD64-CA9BE6D30920}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,14 +76,6 @@ Global
 		{FC1337F3-3EAE-4490-A880-7745E22D0E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC1337F3-3EAE-4490-A880-7745E22D0E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC1337F3-3EAE-4490-A880-7745E22D0E14}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6BEB1053-15AA-466C-8B94-B7E068517E0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6BEB1053-15AA-466C-8B94-B7E068517E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6BEB1053-15AA-466C-8B94-B7E068517E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6BEB1053-15AA-466C-8B94-B7E068517E0D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AFCA8915-B41D-49D1-8CB0-466D08B81C56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AFCA8915-B41D-49D1-8CB0-466D08B81C56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AFCA8915-B41D-49D1-8CB0-466D08B81C56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AFCA8915-B41D-49D1-8CB0-466D08B81C56}.Release|Any CPU.Build.0 = Release|Any CPU
 		{03C11314-1B5C-40F1-A463-5A7050F127E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{03C11314-1B5C-40F1-A463-5A7050F127E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03C11314-1B5C-40F1-A463-5A7050F127E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -104,6 +96,14 @@ Global
 		{9CBCC9FF-DA77-4D55-9689-8421C3561E7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CBCC9FF-DA77-4D55-9689-8421C3561E7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CBCC9FF-DA77-4D55-9689-8421C3561E7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22E9C7E6-2853-4E17-9ED1-C0ED65518696}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22E9C7E6-2853-4E17-9ED1-C0ED65518696}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22E9C7E6-2853-4E17-9ED1-C0ED65518696}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22E9C7E6-2853-4E17-9ED1-C0ED65518696}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B930C70D-8E3B-434E-AD64-CA9BE6D30920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B930C70D-8E3B-434E-AD64-CA9BE6D30920}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B930C70D-8E3B-434E-AD64-CA9BE6D30920}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B930C70D-8E3B-434E-AD64-CA9BE6D30920}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,13 +116,13 @@ Global
 		{740AF8E9-6399-483D-811C-85ADE385DC39} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
 		{0041E65C-F147-4423-A090-ED7D34910674} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
 		{FC1337F3-3EAE-4490-A880-7745E22D0E14} = {3B15E549-960E-422E-B4BD-F0314471C61A}
-		{6BEB1053-15AA-466C-8B94-B7E068517E0D} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
-		{AFCA8915-B41D-49D1-8CB0-466D08B81C56} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
 		{03C11314-1B5C-40F1-A463-5A7050F127E0} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
 		{DC11E763-E5E4-43FA-81C9-DA34A24BBAA8} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
 		{29796B9E-F3C3-415B-8EA1-CA843950589A} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
 		{4C3E105A-61E3-4AD8-955D-0251611395C6} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
 		{9CBCC9FF-DA77-4D55-9689-8421C3561E7F} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
+		{22E9C7E6-2853-4E17-9ED1-C0ED65518696} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
+		{B930C70D-8E3B-434E-AD64-CA9BE6D30920} = {1366F6BD-0107-407B-ADCE-8D176E2D41E3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AB641A2F-8F72-43FE-9A01-864452A31FB7}

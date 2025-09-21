@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MeChat.Infrastucture.MessageBroker.Consumer.Email.DependencyInjection.Extentions;
+namespace MeChat.Infrastucture.MessageBroker.Consumer.DependencyInjection.Extentions;
 
 public static class MessageBrokerExtention
 {

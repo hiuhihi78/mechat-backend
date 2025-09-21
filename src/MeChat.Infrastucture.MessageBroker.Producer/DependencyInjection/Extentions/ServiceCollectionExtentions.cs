@@ -1,9 +1,9 @@
 ﻿using MeChat.Common.Abstractions.Services;
-using MeChat.Infrastucture.MessageBroker.Producer.Email.Services;
+using MeChat.Infrastucture.MessageBroker.Producer.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MeChat.Infrastucture.MessageBroker.Producer.Email.DependencyInjection.Extentions;
+namespace MeChat.Infrastucture.MessageBroker.Producer.DependencyInjection.Extentions;
 public static class ServiceCollectionExtentions
 {
 

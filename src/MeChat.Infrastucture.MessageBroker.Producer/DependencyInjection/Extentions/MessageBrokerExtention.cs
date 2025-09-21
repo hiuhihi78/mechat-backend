@@ -4,7 +4,7 @@ using MeChat.Common.MessageBroker.Email;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MeChat.Infrastucture.MessageBroker.Producer.Email.DependencyInjection.Extentions;
+namespace MeChat.Infrastucture.MessageBroker.Producer.DependencyInjection.Extentions;
 public static class MessageBrokerExtention
 {
     #region Add Message Broker

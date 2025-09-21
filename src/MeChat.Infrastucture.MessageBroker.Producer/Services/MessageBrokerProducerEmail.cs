@@ -3,7 +3,7 @@ using MeChat.Common.Abstractions.Services;
 using MeChat.Common.MessageBroker.Email;
 using System.Transactions;
 
-namespace MeChat.Infrastucture.MessageBroker.Producer.Email.Services;
+namespace MeChat.Infrastucture.MessageBroker.Producer.Services;
 public class MessageBrokerProducerEmail : IMessageBrokerProducerEmail
 {
     private readonly IPublishEndpoint publishEndpoint;

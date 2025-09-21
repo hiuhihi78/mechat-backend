@@ -2,7 +2,7 @@
 using MeChat.Common.Abstractions.Messages.InterationEvents;
 using MediatR;
 
-namespace MeChat.Infrastucture.MessageBroker.Consumer.Email.Abtractions.Messages;
+namespace MeChat.Infrastucture.MessageBroker.Consumer.Abtractions.Messages;
 
 public abstract class BaseConsumer<TMessage> : IConsumer<TMessage>
     where TMessage : class, INotificationEvent
