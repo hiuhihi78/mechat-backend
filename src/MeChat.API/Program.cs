@@ -21,22 +21,6 @@ public class Program
 
         // Add services to the container.
 
-        //Add Cors
-        builder.Services.AddCors(options =>
-        {
-            //var origins = builder.Configuration.GetSection("CorsOrigns").Get<string[]>()!;
-            //options.AddDefaultPolicy(policy =>
-            //{
-            //    policy.WithOrigins(origins).AllowCredentials().AllowAnyHeader().AllowAnyMethod();
-            //});
-
-            // Allow all origin
-            options.AddDefaultPolicy(policy =>
-            {
-                policy.AllowCredentials().AllowAnyHeader().AllowAnyMethod();
-            });
-        });
-
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddSwaggerGen();
 
@@ -106,11 +90,42 @@ public class Program
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
 
+        //Add Cors
+        builder.Services.AddCors(options =>
+        {
+            //var origins = builder.Configuration.GetSection("CorsOrigns").Get<string[]>()!;
+            //options.AddDefaultPolicy(policy =>
+            //{
+            //    policy.WithOrigins(origins).AllowCredentials().AllowAnyHeader().AllowAnyMethod();
+            //});
+
+            // Allow all origin
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            });
+        });
+
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
+        // Develop enviroment
         if (app.Environment.IsDevelopment())
         {
+            // Use swagger
+            app.UseConfigurationSwagger();
+        }
+
+        // Staging enviroment
+        if (app.Environment.IsStaging())
+        {
+            // Use swagger
+            app.UseConfigurationSwagger();
+        }
+
+        // Production enviroment
+        if (app.Environment.IsProduction())
+        {
+            // Use swagger
             app.UseConfigurationSwagger();
         }
 
