@@ -1,4 +1,4 @@
-name: MeChat CI - Build -> Lint -> Test -> Deploy
+name: MeChat CI/CD
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build Project
+    name: Build Projects
     runs-on: ubuntu-latest
 
     steps:
@@ -26,14 +26,25 @@ jobs:
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
 
-      - name: Publish application
-        run: dotnet publish -c Release -o ./publish
+      - name: Publish MeChat.API (Production)
+        run: |
+          ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.API/MeChat.API.csproj -c Release -o ./publish-api
 
-      - name: Upload publish artifact
+      - name: Publish MessageBroker.Consumer (Production)
+        run: |
+          ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.Infrastructure.MessageBroker.Consumer/MeChat.Infrastructure.MessageBroker.Consumer.csproj -c Release -o ./publish-consumer
+
+      - name: Upload API artifact
         uses: actions/upload-artifact@v4
         with:
-          name: publish-folder
-          path: ./publish
+          name: publish-api
+          path: ./publish-api
+
+      - name: Upload Consumer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-consumer
+          path: ./publish-consumer
 
   lint:
     name: Lint Code
@@ -48,13 +59,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '7.0'
-
-      # Optional - uncomment to enable formatting check
-      # - name: Install dotnet format
-      #   run: dotnet tool install --global dotnet-format
-
-      # - name: Run dotnet format check
-      #   run: dotnet format MeChat.sln --verify-no-changes --verbosity diagnostic
 
   test:
     name: Run Unit Tests
@@ -80,47 +84,58 @@ jobs:
         run: dotnet test test/MeChat.Architecture.Tests/MeChat.Architecture.Tests.csproj --no-build --configuration Release --logger "trx"
 
   deploy:
-    name: Deploy to IIS Server (only on main)
+    name: Deploy API and Consumer to IIS Server
     if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
     needs: test
 
     steps:
-      - name: Download publish artifact
+      - name: Download API artifact
         uses: actions/download-artifact@v4
         with:
-          name: publish-folder
-          path: publish
+          name: publish-api
+          path: publish-api
 
-      - name: Deploy to IIS via WinRM
+      - name: Download Consumer artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: publish-consumer
+          path: publish-consumer
+
+      - name: Deploy via WinRM
         shell: powershell
         env:
           VM_HOST: ${{ secrets.VM_HOST }}
           VM_USERNAME: ${{ secrets.VM_USERNAME }}
           VM_PASSWORD: ${{ secrets.VM_PASSWORD }}
           VM_DEPLOY_FOLDER: ${{ secrets.VM_DEPLOY_FOLDER }}
+          VM_DEPLOY_CONSUMER_FOLDER: ${{ secrets.VM_DEPLOY_CONSUMER_FOLDER }}
         run: |
           # Configure WinRM client
           Set-Item WSMan:\localhost\Client\AllowUnencrypted -Value $true
           Set-Item WSMan:\localhost\Client\TrustedHosts -Value "$env:VM_HOST" -Force
 
-          # Create credential object
+          # Create credential
           $secpasswd = ConvertTo-SecureString "$env:VM_PASSWORD" -AsPlainText -Force
           $cred = New-Object System.Management.Automation.PSCredential ($env:VM_USERNAME, $secpasswd)
 
-          # Establish remote session
+          # Open remote session
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
 
-          # Ensure remote folder exists
+          # Create folders
           Invoke-Command -Session $session -ScriptBlock {
-            param($path)
-            New-Item -Path $path -ItemType Directory -Force
-          } -ArgumentList $env:VM_DEPLOY_FOLDER
+            param($path1, $path2)
+            New-Item -Path $path1 -ItemType Directory -Force
+            New-Item -Path $path2 -ItemType Directory -Force
+          } -ArgumentList $env:VM_DEPLOY_FOLDER, $env:VM_DEPLOY_CONSUMER_FOLDER
 
-          # Copy published files to target folder
-          Copy-Item -Path ".\publish\*" -Destination $env:VM_DEPLOY_FOLDER -Recurse -Force -ToSession $session
+          # Copy API files
+          Copy-Item -Path ".\publish-api\*" -Destination $env:VM_DEPLOY_FOLDER -Recurse -Force -ToSession $session
 
-          # Restart IIS to apply changes
+          # Copy Consumer files
+          Copy-Item -Path ".\publish-consumer\*" -Destination $env:VM_DEPLOY_CONSUMER_FOLDER -Recurse -Force -ToSession $session
+
+          # Restart IIS (optional if API hosted there)
           Invoke-Command -Session $session -ScriptBlock {
             iisreset
           }

@@ -30,7 +30,7 @@
     <ProjectReference Include="..\MeChat.Infrastucture.Storage\MeChat.Infrastucture.Storage.csproj" />
     <ProjectReference Include="..\MeChat.Infrastucture.Data.Dapper\MeChat.Infrastucture.Data.Dapper.csproj" />
     <ProjectReference Include="..\MeChat.Infrastucture.DistributedCache\MeChat.Infrastucture.DistributedCache.csproj" />
-    <ProjectReference Include="..\MeChat.Infrastucture.MessageBroker.Producer.Email\MeChat.Infrastucture.MessageBroker.Producer.Email.csproj" />
+    <ProjectReference Include="..\MeChat.Infrastucture.MessageBroker.Producer\MeChat.Infrastucture.MessageBroker.Producer.csproj" />
     <ProjectReference Include="..\MeChat.Persistence\MeChat.Persistence.csproj" />
     <ProjectReference Include="..\MeChat.Presentation\MeChat.Presentation.csproj" />
   </ItemGroup>
