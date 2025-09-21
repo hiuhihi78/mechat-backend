@@ -123,23 +123,29 @@ jobs:
           # Open remote session
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
 
-          # Create folders
+          # Create folders if not exists
           Invoke-Command -Session $session -ScriptBlock {
             param($path1, $path2)
             New-Item -Path $path1 -ItemType Directory -Force
             New-Item -Path $path2 -ItemType Directory -Force
           } -ArgumentList $env:VM_DEPLOY_FOLDER, $env:VM_DEPLOY_CONSUMER_FOLDER
 
-          # Copy API files
+          # Copy API files to IIS folder
           Copy-Item -Path ".\publish-api\*" -Destination $env:VM_DEPLOY_FOLDER -Recurse -Force -ToSession $session
 
           # Copy Consumer files
           Copy-Item -Path ".\publish-consumer\*" -Destination $env:VM_DEPLOY_CONSUMER_FOLDER -Recurse -Force -ToSession $session
 
-          # Restart IIS (optional if API hosted there)
+          # Start Consumer as background process
+          Invoke-Command -Session $session -ScriptBlock {
+            param($consumerPath)
+            Start-Process -FilePath "$consumerPath\MeChat.Infrastructure.MessageBroker.Consumer.exe" -WindowStyle Hidden
+          } -ArgumentList $env:VM_DEPLOY_CONSUMER_FOLDER
+
+          # Restart IIS (only needed for API)
           Invoke-Command -Session $session -ScriptBlock {
             iisreset
           }
 
-          # Close session
+          # Close remote session
           Remove-PSSession $session
