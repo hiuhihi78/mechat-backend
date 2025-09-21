@@ -29,7 +29,7 @@
     <ProjectReference Include="..\..\src\MeChat.Application\MeChat.Application.csproj" />
     <ProjectReference Include="..\..\src\MeChat.Common\MeChat.Common.csproj" />
     <ProjectReference Include="..\..\src\MeChat.Domain\MeChat.Domain.csproj" />
-    <ProjectReference Include="..\..\src\MeChat.Infrastucture.Data.Dapper\MeChat.Infrastucture.Data.Dapper.csproj" />
+    <ProjectReference Include="..\..\src\MeChat.Infrastructure.Data.Dapper\MeChat.Infrastructure.Data.Dapper.csproj" />
     <ProjectReference Include="..\..\src\MeChat.Persistence\MeChat.Persistence.csproj" />
     <ProjectReference Include="..\..\src\MeChat.Presentation\MeChat.Presentation.csproj" />
   </ItemGroup>

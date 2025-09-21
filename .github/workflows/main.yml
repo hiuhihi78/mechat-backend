@@ -4,7 +4,8 @@ on:
   push:
     branches: [ "**" ]
   pull_request:
-    branches: [ "**" ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -84,7 +85,7 @@ jobs:
         run: dotnet test test/MeChat.Architecture.Tests/MeChat.Architecture.Tests.csproj --no-build --configuration Release --logger "trx"
 
   deploy:
-    name: Deploy API and Consumer to IIS Server
+    name: Deploy to IIS Server
     if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
     needs: test

@@ -1,14 +1,14 @@
 using MeChat.Persistence.DependencyInjection.Extentions;
-using MeChat.Infrastucture.Dapper.DependencyInjection.Extentions;
+using MeChat.Infrastructure.Dapper.DependencyInjection.Extentions;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using MeChat.API.DependencyInjection.Extentions;
 using MeChat.Application.DependencyInjection.Extentions;
 using MeChat.API.Middlewares;
-using MeChat.Infrastucture.DistributedCache.DependencyInjection.Extentions;
+using MeChat.Infrastructure.DistributedCache.DependencyInjection.Extentions;
 using System.Text.Json.Serialization;
-using MeChat.Infrastucture.Service.DependencyInjection.Extentions;
-using MeChat.Infrastucture.Storage.DependencyInjection.Extentions;
-using MeChat.Infrastucture.MessageBroker.Producer.DependencyInjection.Extentions;
+using MeChat.Infrastructure.Service.DependencyInjection.Extentions;
+using MeChat.Infrastructure.Storage.DependencyInjection.Extentions;
+using MeChat.Infrastructure.MessageBroker.Producer.DependencyInjection.Extentions;
 using MeChat.Infrastructure.RealTime.DependencyInjection.Extentions;
 
 namespace MeChat.API;
@@ -43,7 +43,7 @@ public class Program
         //Add application utils
         builder.Services.AddApplicationUtils();
 
-        //Add messagebroker (Infrastucture.MessageBroker)
+        //Add messagebroker (Infrastructure.MessageBroker)
         builder.Services.AddMessageBroker(builder.Configuration);
 
         //Add configuration MediatR(Application)
@@ -55,25 +55,25 @@ public class Program
         //Add configuration storage
         builder.Services.AddStorage(builder.Configuration);
 
-        //Add configuration connect SQL Server with Dapper(Infrastucture.Dapper)
+        //Add configuration connect SQL Server with Dapper(Infrastructure.Dapper)
         builder.Services.AddSqlServerDapper();
 
-        //Add configuration Jwt Authentication (Infrastucture.Jwt)
+        //Add configuration Jwt Authentication (Infrastructure.Jwt)
         builder.Services.AddJwtAuthentication(builder.Configuration);
 
-        //Add configuration Jwt Service (Infrastucture.Jwt)
+        //Add configuration Jwt Service (Infrastructure.Jwt)
         builder.Services.AddJwtService();
 
-        // Add Message broker producer for email //Infrastucture.MessageBroker.Producer.Email
+        // Add Message broker producer for email //Infrastructure.MessageBroker.Producer.Email
         builder.Services.AddMessageBrokerProducerEmail();
 
-        //Add configuration Redis(Infrastucture.Redis)
+        //Add configuration Redis(Infrastructure.Redis)
         builder.Services.AddDistributedCache(builder.Configuration);
         
-        //Add configuration connect SQL Server with EF(Infrastucture.Persistence)
+        //Add configuration connect SQL Server with EF(Infrastructure.Persistence)
         builder.Services.AddSqlServerEntityFramwork();
 
-        //Add controller API (Infrastucture.Presentation)
+        //Add controller API (Infrastructure.Presentation)
         builder.Services
             .AddControllers()
             .AddApplicationPart(Presentation.AssemblyReference.Assembly);
@@ -81,7 +81,7 @@ public class Program
         //Add Middlewares
         builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
-        //Add realtime (Infrastucture.RealTime)
+        //Add realtime (Infrastructure.RealTime)
         builder.Services.AddRealTime();
 
         // Use remove cycle object's data in json respone
