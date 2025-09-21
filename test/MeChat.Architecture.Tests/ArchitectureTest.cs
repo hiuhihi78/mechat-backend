@@ -8,9 +8,9 @@ public class ArchitectureTest
     private const string API_NAMESPACE = $"{DOMAIN}.API";
     private const string APPLICATION_NAMESPACE = $"{DOMAIN}.Application";
     private const string DOMAIN_NAMESPACE = $"{DOMAIN}.Domain";
-    private const string INFRASTUCTRE_Dapper_NAMESPACE = $"{DOMAIN}.Infrastucture.Dapper";
-    private const string INFRASTUCTRE_JWT_NAMESPACE = $"{DOMAIN}.Infrastucture.Jwt";
-    private const string INFRASTUCTRE_REDIS_NAMESPACE = $"{DOMAIN}.Infrastucture.Redis";
+    private const string INFRASTUCTRE_Dapper_NAMESPACE = $"{DOMAIN}.Infrastructure.Dapper";
+    private const string INFRASTUCTRE_JWT_NAMESPACE = $"{DOMAIN}.Infrastructure.Jwt";
+    private const string INFRASTUCTRE_REDIS_NAMESPACE = $"{DOMAIN}.Infrastructure.Redis";
     private const string PERSISTENCE_NAMESPACE = $"{DOMAIN}.Persistence";
     private const string PRESENTATION_NAMESPACE = $"{DOMAIN}.Presentation";
 
@@ -71,7 +71,7 @@ public class ArchitectureTest
     public void InfrastructureDapperShouldNotHaveDependencyOnOtherProjects()
     {
         // Arrange
-        var assembly = Infrastucture.Dapper.AssemblyReference.Assembly;
+        var assembly = Infrastructure.Dapper.AssemblyReference.Assembly;
 
         var otherProjects = new[]
         {
@@ -94,7 +94,7 @@ public class ArchitectureTest
     public void InfrastructureRedisShouldNotHaveDependencyOnOtherProjects()
     {
         // Arrange
-        var assembly = Infrastucture.Dapper.AssemblyReference.Assembly;
+        var assembly = Infrastructure.Dapper.AssemblyReference.Assembly;
 
         var otherProjects = new[]
         {
@@ -117,7 +117,7 @@ public class ArchitectureTest
     public void InfrastructureJwtShouldNotHaveDependencyOnOtherProjects()
     {
         // Arrange
-        var assembly = Infrastucture.Dapper.AssemblyReference.Assembly;
+        var assembly = Infrastructure.Dapper.AssemblyReference.Assembly;
 
         var otherProjects = new[]
         {
