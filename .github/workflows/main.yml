@@ -128,11 +128,12 @@ jobs:
           # Open remote session
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
 
-          # Stop IIS + Consumer service
+          # Stop IIS + Consumer service if running
           Invoke-Command -Session $session -ScriptBlock {
             param($serviceName)
             iisreset /stop
-            if (Get-Service $serviceName -ErrorAction SilentlyContinue) {
+            $svc = Get-Service $serviceName -ErrorAction SilentlyContinue
+            if ($svc -and $svc.Status -eq 'Running') {
               Stop-Service $serviceName -Force
             }
           } -ArgumentList $env:VM_CONSUMER_SERVICE
@@ -150,19 +151,22 @@ jobs:
           # Copy Consumer files
           Copy-Item -Path ".\publish-consumer\*" -Destination $env:VM_DEPLOY_CONSUMER_FOLDER -Recurse -Force -ToSession $session
 
-          # Tạo service Consumer nếu chưa có
+          # Tạo service Consumer bằng nssm nếu chưa có
           Invoke-Command -Session $session -ScriptBlock {
-            param($serviceName, $consumerExe)
+            param($serviceName, $consumerExe, $consumerDir)
             if (-not (Get-Service $serviceName -ErrorAction SilentlyContinue)) {
-              sc.exe create $serviceName binPath= "`"$consumerExe`"" start= auto
+              nssm install $serviceName $consumerExe
+              nssm set $serviceName AppDirectory $consumerDir
+              nssm set $serviceName Start SERVICE_AUTO_START
             }
-          } -ArgumentList $env:VM_CONSUMER_SERVICE, "$env:VM_DEPLOY_CONSUMER_FOLDER\MeChat.Infrastructure.MessageBroker.Consumer.exe"
+          } -ArgumentList $env:VM_CONSUMER_SERVICE, "$env:VM_DEPLOY_CONSUMER_FOLDER\MeChat.Infrastructure.MessageBroker.Consumer.exe", $env:VM_DEPLOY_CONSUMER_FOLDER
 
           # Restart IIS + Consumer service
           Invoke-Command -Session $session -ScriptBlock {
             param($serviceName)
             iisreset /start
-            if (Get-Service $serviceName -ErrorAction SilentlyContinue) {
+            $svc = Get-Service $serviceName -ErrorAction SilentlyContinue
+            if ($svc -and $svc.Status -ne 'Running') {
               Start-Service $serviceName
             }
           } -ArgumentList $env:VM_CONSUMER_SERVICE
