@@ -28,10 +28,12 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish MeChat.API (Production)
+        if: github.ref == 'refs/heads/main'
         run: |
           ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.API/MeChat.API.csproj -c Release -o ./publish-api
 
       - name: Publish MessageBroker.Consumer (Production)
+        if: github.ref == 'refs/heads/main'
         run: |
           ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.Infrastructure.MessageBroker.Consumer/MeChat.Infrastructure.MessageBroker.Consumer.csproj -c Release -o ./publish-consumer
 
@@ -111,6 +113,7 @@ jobs:
           VM_PASSWORD: ${{ secrets.VM_PASSWORD }}
           VM_DEPLOY_FOLDER: ${{ secrets.VM_DEPLOY_FOLDER }}
           VM_DEPLOY_CONSUMER_FOLDER: ${{ secrets.VM_DEPLOY_CONSUMER_FOLDER }}
+          VM_CONSUMER_SERVICE: "MeChatConsumerService"
         run: |
           # Configure WinRM client
           Set-Item WSMan:\localhost\Client\AllowUnencrypted -Value $true
@@ -123,6 +126,14 @@ jobs:
           # Open remote session
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
 
+          # Stop IIS + Consumer service
+          Invoke-Command -Session $session -ScriptBlock {
+            iisreset /stop
+            if (Get-Service $using:VM_CONSUMER_SERVICE -ErrorAction SilentlyContinue) {
+              Stop-Service $using:VM_CONSUMER_SERVICE -Force
+            }
+          }
+
           # Create folders if not exists
           Invoke-Command -Session $session -ScriptBlock {
             param($path1, $path2)
@@ -130,21 +141,26 @@ jobs:
             New-Item -Path $path2 -ItemType Directory -Force
           } -ArgumentList $env:VM_DEPLOY_FOLDER, $env:VM_DEPLOY_CONSUMER_FOLDER
 
-          # Copy API files to IIS folder
+          # Copy API files
           Copy-Item -Path ".\publish-api\*" -Destination $env:VM_DEPLOY_FOLDER -Recurse -Force -ToSession $session
 
           # Copy Consumer files
           Copy-Item -Path ".\publish-consumer\*" -Destination $env:VM_DEPLOY_CONSUMER_FOLDER -Recurse -Force -ToSession $session
 
-          # Start Consumer as background process
+          # Create service Consumer If not exit
           Invoke-Command -Session $session -ScriptBlock {
-            param($consumerPath)
-            Start-Process -FilePath "$consumerPath\MeChat.Infrastructure.MessageBroker.Consumer.exe" -WindowStyle Hidden
-          } -ArgumentList $env:VM_DEPLOY_CONSUMER_FOLDER
+            param($serviceName, $consumerExe)
+            if (-not (Get-Service $serviceName -ErrorAction SilentlyContinue)) {
+              sc.exe create $serviceName binPath= "`"$consumerExe`"" start= auto
+            }
+          } -ArgumentList $env:VM_CONSUMER_SERVICE, "$env:VM_DEPLOY_CONSUMER_FOLDER\MeChat.Infrastructure.MessageBroker.Consumer.exe"
 
-          # Restart IIS (only needed for API)
+          # Restart IIS + Consumer service
           Invoke-Command -Session $session -ScriptBlock {
-            iisreset
+            iisreset /start
+            if (Get-Service $using:VM_CONSUMER_SERVICE -ErrorAction SilentlyContinue) {
+              Start-Service $using:VM_CONSUMER_SERVICE
+            }
           }
 
           # Close remote session
