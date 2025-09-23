@@ -38,12 +38,14 @@ jobs:
           ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.Infrastructure.MessageBroker.Consumer/MeChat.Infrastructure.MessageBroker.Consumer.csproj -c Release -o ./publish-consumer
 
       - name: Upload API artifact
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: publish-api
           path: ./publish-api
 
       - name: Upload Consumer artifact
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: publish-consumer
@@ -113,7 +115,7 @@ jobs:
           VM_PASSWORD: ${{ secrets.VM_PASSWORD }}
           VM_DEPLOY_FOLDER: ${{ secrets.VM_DEPLOY_FOLDER }}
           VM_DEPLOY_CONSUMER_FOLDER: ${{ secrets.VM_DEPLOY_CONSUMER_FOLDER }}
-          VM_CONSUMER_SERVICE: "MeChatConsumerService"
+          VM_CONSUMER_SERVICE: ${{ secrets.VM_CONSUMER_SERVICE }}
         run: |
           # Configure WinRM client
           Set-Item WSMan:\localhost\Client\AllowUnencrypted -Value $true
@@ -128,11 +130,12 @@ jobs:
 
           # Stop IIS + Consumer service
           Invoke-Command -Session $session -ScriptBlock {
+            param($serviceName)
             iisreset /stop
-            if (Get-Service $using:VM_CONSUMER_SERVICE -ErrorAction SilentlyContinue) {
-              Stop-Service $using:VM_CONSUMER_SERVICE -Force
+            if (Get-Service $serviceName -ErrorAction SilentlyContinue) {
+              Stop-Service $serviceName -Force
             }
-          }
+          } -ArgumentList $env:VM_CONSUMER_SERVICE
 
           # Create folders if not exists
           Invoke-Command -Session $session -ScriptBlock {
@@ -147,7 +150,7 @@ jobs:
           # Copy Consumer files
           Copy-Item -Path ".\publish-consumer\*" -Destination $env:VM_DEPLOY_CONSUMER_FOLDER -Recurse -Force -ToSession $session
 
-          # Create service Consumer If not exit
+          # Tạo service Consumer nếu chưa có
           Invoke-Command -Session $session -ScriptBlock {
             param($serviceName, $consumerExe)
             if (-not (Get-Service $serviceName -ErrorAction SilentlyContinue)) {
@@ -157,11 +160,12 @@ jobs:
 
           # Restart IIS + Consumer service
           Invoke-Command -Session $session -ScriptBlock {
+            param($serviceName)
             iisreset /start
-            if (Get-Service $using:VM_CONSUMER_SERVICE -ErrorAction SilentlyContinue) {
-              Start-Service $using:VM_CONSUMER_SERVICE
+            if (Get-Service $serviceName -ErrorAction SilentlyContinue) {
+              Start-Service $serviceName
             }
-          }
+          } -ArgumentList $env:VM_CONSUMER_SERVICE
 
           # Close remote session
           Remove-PSSession $session
