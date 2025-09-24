@@ -3,10 +3,7 @@ name: MeChat CI/CD
 on:
   push:
     branches:
-      - test
-  pull_request:
-    branches:
-      - main                  # Trigger when PR targets main
+      - main   
 
 jobs:
   build:
