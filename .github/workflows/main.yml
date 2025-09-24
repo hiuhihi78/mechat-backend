@@ -189,7 +189,7 @@ jobs:
             iisreset /start
             $svc = Get-Service $serviceName -ErrorAction SilentlyContinue
             if ($svc -and $svc.Status -ne 'Running') {
-              Start-Service $serviceName -ErrorAction Stop
+              nssm start $serviceName
             }
           } -ArgumentList $env:VM_CONSUMER_SERVICE
 
