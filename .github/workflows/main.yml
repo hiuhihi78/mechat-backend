@@ -3,13 +3,12 @@ name: MeChat CI/CD
 on:
   push:
     branches:
-      - main   
+      - main
 
 jobs:
   build:
     name: Build Projects
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,30 +25,69 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish MeChat.API (Production)
+        if: github.ref == 'refs/heads/main'
         run: |
           ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.API/MeChat.API.csproj -c Release -o ./publish-api
 
       - name: Publish MessageBroker.Consumer (Production)
+        if: github.ref == 'refs/heads/main'
         run: |
           ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.Infrastructure.MessageBroker.Consumer/MeChat.Infrastructure.MessageBroker.Consumer.csproj -c Release -o ./publish-consumer
 
       - name: Upload API artifact
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: publish-api
           path: ./publish-api
 
       - name: Upload Consumer artifact
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: publish-consumer
           path: ./publish-consumer
 
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.0'
+
+  test:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.0'
+
+      - name: Restore MeChat.Architecture.Tests
+        run: dotnet restore test/MeChat.Architecture.Tests/MeChat.Architecture.Tests.csproj
+
+      - name: Build MeChat.Architecture.Tests
+        run: dotnet build test/MeChat.Architecture.Tests/MeChat.Architecture.Tests.csproj --no-restore --configuration Release
+
+      - name: Run MeChat.Architecture.Tests
+        run: dotnet test test/MeChat.Architecture.Tests/MeChat.Architecture.Tests.csproj --no-build --configuration Release --logger "trx"
+
   stop_services:
     name: Stop IIS + Consumer
     if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
-    needs: build
+    needs: test
     steps:
       - name: Stop IIS and Consumer
         shell: powershell
