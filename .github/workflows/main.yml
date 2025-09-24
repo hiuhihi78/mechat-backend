@@ -2,10 +2,10 @@ name: MeChat CI/CD
 
 on:
   push:
-    branches: [ "**" ]        # Trigger on push to any branch
+    branches: [ "**" ]
   pull_request:
     branches:
-      - main                  # Trigger when PR targets main
+      - main
 
 jobs:
   build:
@@ -13,37 +13,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout source code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Install .NET SDK version 7.0
       - name: Set up .NET Core SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '7.0'
 
-      # Restore dependencies
       - name: Restore dependencies
         run: dotnet restore
 
-      # Build solution
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
 
-      # Publish API (only on main branch)
       - name: Publish MeChat.API (Production)
         if: github.ref == 'refs/heads/main'
         run: |
           ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.API/MeChat.API.csproj -c Release -o ./publish-api
 
-      # Publish Consumer (only on main branch)
       - name: Publish MessageBroker.Consumer (Production)
         if: github.ref == 'refs/heads/main'
         run: |
           ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.Infrastructure.MessageBroker.Consumer/MeChat.Infrastructure.MessageBroker.Consumer.csproj -c Release -o ./publish-consumer
 
-      # Upload API artifact
       - name: Upload API artifact
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
@@ -51,7 +44,6 @@ jobs:
           name: publish-api
           path: ./publish-api
 
-      # Upload Consumer artifact
       - name: Upload Consumer artifact
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
@@ -87,15 +79,12 @@ jobs:
         with:
           dotnet-version: '7.0'
 
-      # Restore test project
       - name: Restore MeChat.Architecture.Tests
         run: dotnet restore test/MeChat.Architecture.Tests/MeChat.Architecture.Tests.csproj
 
-      # Build test project
       - name: Build MeChat.Architecture.Tests
         run: dotnet build test/MeChat.Architecture.Tests/MeChat.Architecture.Tests.csproj --no-restore --configuration Release
 
-      # Run tests
       - name: Run MeChat.Architecture.Tests
         run: dotnet test test/MeChat.Architecture.Tests/MeChat.Architecture.Tests.csproj --no-build --configuration Release --logger "trx"
 
@@ -106,37 +95,18 @@ jobs:
     needs: test
 
     steps:
-      # Download API artifact
       - name: Download API artifact
         uses: actions/download-artifact@v4
         with:
           name: publish-api
           path: publish-api
 
-      # Download Consumer artifact
       - name: Download Consumer artifact
         uses: actions/download-artifact@v4
         with:
           name: publish-consumer
           path: publish-consumer
 
-      # Ensure NSSM exists (download if missing)
-      - name: Ensure NSSM is installed
-        shell: powershell
-        run: |
-          if (-not (Get-Command nssm.exe -ErrorAction SilentlyContinue)) {
-            Write-Host "=== NSSM not found. Downloading... ==="
-            $zipPath = "$env:TEMP\nssm.zip"
-            $extractPath = "$env:TEMP\nssm"
-            Invoke-WebRequest -Uri "https://nssm.cc/release/nssm-2.24.zip" -OutFile $zipPath
-            Expand-Archive $zipPath -DestinationPath $extractPath -Force
-            Copy-Item "$extractPath\nssm-2.24\win64\nssm.exe" -Destination "C:\Windows\System32" -Force
-            Write-Host "=== NSSM installed successfully ==="
-          } else {
-            Write-Host "=== NSSM already exists. Skipping download. ==="
-          }
-
-      # Deploy using WinRM
       - name: Deploy via WinRM
         shell: powershell
         env:
@@ -147,18 +117,12 @@ jobs:
           VM_DEPLOY_CONSUMER_FOLDER: ${{ secrets.VM_DEPLOY_CONSUMER_FOLDER }}
           VM_CONSUMER_SERVICE: ${{ secrets.VM_CONSUMER_SERVICE }}
         run: |
-          Write-Host "=== Configuring WinRM client ==="
-          Set-Item WSMan:\localhost\Client\AllowUnencrypted -Value $true
-          Set-Item WSMan:\localhost\Client\TrustedHosts -Value "$env:VM_HOST" -Force
-
-          Write-Host "=== Creating credential object ==="
+          # Create credential & session
           $secpasswd = ConvertTo-SecureString "$env:VM_PASSWORD" -AsPlainText -Force
           $cred = New-Object System.Management.Automation.PSCredential ($env:VM_USERNAME, $secpasswd)
-
-          Write-Host "=== Opening remote session to $env:VM_HOST ==="
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
 
-          Write-Host "=== Stopping IIS and Consumer service if running ==="
+          # Stop IIS and Consumer service
           Invoke-Command -Session $session -ScriptBlock {
             param($serviceName)
             iisreset /stop
@@ -168,56 +132,26 @@ jobs:
             }
           } -ArgumentList $env:VM_CONSUMER_SERVICE
 
-          Write-Host "=== Ensuring deploy folders exist ==="
+          # Ensure deploy folders
           Invoke-Command -Session $session -ScriptBlock {
             param($path1, $path2)
             New-Item -Path $path1 -ItemType Directory -Force | Out-Null
             New-Item -Path $path2 -ItemType Directory -Force | Out-Null
           } -ArgumentList $env:VM_DEPLOY_FOLDER, $env:VM_DEPLOY_CONSUMER_FOLDER
 
-          Write-Host "=== Copying API files ==="
-          Copy-Item -Path ".\publish-api\*" -Destination $env:VM_DEPLOY_FOLDER -Recurse -Force -ToSession $session -ErrorAction Stop
+          # Copy artifacts
+          Copy-Item -Path ".\publish-api\*" -Destination $env:VM_DEPLOY_FOLDER -Recurse -Force -ToSession $session
+          Copy-Item -Path ".\publish-consumer\*" -Destination $env:VM_DEPLOY_CONSUMER_FOLDER -Recurse -Force -ToSession $session
 
-          Write-Host "=== Copying Consumer files ==="
-          Copy-Item -Path ".\publish-consumer\*" -Destination $env:VM_DEPLOY_CONSUMER_FOLDER -Recurse -Force -ToSession $session -ErrorAction Stop
-
-          Write-Host "=== Installing or updating Consumer service via NSSM ==="
+          # Restart IIS and Consumer service
           Invoke-Command -Session $session -ScriptBlock {
-            param($serviceName, $consumerExe, $consumerDir)
-            if (-not (Get-Service $serviceName -ErrorAction SilentlyContinue)) {
-              Write-Output "Service $serviceName not found. Installing..."
-              nssm install $serviceName $consumerExe
-              nssm set $serviceName AppDirectory $consumerDir
-              nssm set $serviceName Start SERVICE_AUTO_START
-              nssm set $serviceName AppExit Default Restart
-              nssm set $serviceName AppStdout $consumerDir\consumer.log
-              nssm set $serviceName AppStderr $consumerDir\consumer-error.log
-            } else {
-              Write-Output "Service $serviceName already exists. Skipping install."
-            }
-          } -ArgumentList $env:VM_CONSUMER_SERVICE, "$env:VM_DEPLOY_CONSUMER_FOLDER\MeChat.Infrastructure.MessageBroker.Consumer.exe", $env:VM_DEPLOY_CONSUMER_FOLDER
-
-          Write-Host "=== Restarting IIS and Consumer service ==="
-          Invoke-Command -Session $session -ScriptBlock {
-            param($serviceName, $consumerDir)
+            param($serviceName)
             iisreset /start
             $svc = Get-Service $serviceName -ErrorAction SilentlyContinue
             if ($svc -and $svc.Status -ne 'Running') {
-              Start-Service $serviceName -ErrorAction Stop
-              Start-Sleep -Seconds 5
-              Write-Output "Service $serviceName started. Checking logs..."
-              if (Test-Path "$consumerDir\consumer-error.log") {
-                Write-Output "--- consumer-error.log ---"
-                Get-Content "$consumerDir\consumer-error.log" -Tail 50
-              }
-              if (Test-Path "$consumerDir\consumer.log") {
-                Write-Output "--- consumer.log ---"
-                Get-Content "$consumerDir\consumer.log" -Tail 50
-              }
-            } else {
-              Write-Output "Service $serviceName already running"
+              Start-Service $serviceName
             }
-          } -ArgumentList $env:VM_CONSUMER_SERVICE, $env:VM_DEPLOY_CONSUMER_FOLDER
+          } -ArgumentList $env:VM_CONSUMER_SERVICE
 
-          Write-Host "=== Closing remote session ==="
+          # Close session
           Remove-PSSession $session
