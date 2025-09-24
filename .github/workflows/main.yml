@@ -120,6 +120,22 @@ jobs:
           name: publish-consumer
           path: publish-consumer
 
+      # Ensure NSSM exists (download if missing)
+      - name: Ensure NSSM is installed
+        shell: powershell
+        run: |
+          if (-not (Get-Command nssm.exe -ErrorAction SilentlyContinue)) {
+            Write-Host "=== NSSM not found. Downloading... ==="
+            $zipPath = "$env:TEMP\nssm.zip"
+            $extractPath = "$env:TEMP\nssm"
+            Invoke-WebRequest -Uri "https://nssm.cc/release/nssm-2.24.zip" -OutFile $zipPath
+            Expand-Archive $zipPath -DestinationPath $extractPath -Force
+            Copy-Item "$extractPath\nssm-2.24\win64\nssm.exe" -Destination "C:\Windows\System32" -Force
+            Write-Host "=== NSSM installed successfully ==="
+          } else {
+            Write-Host "=== NSSM already exists. Skipping download. ==="
+          }
+
       # Deploy using WinRM
       - name: Deploy via WinRM
         shell: powershell
@@ -148,10 +164,7 @@ jobs:
             iisreset /stop
             $svc = Get-Service $serviceName -ErrorAction SilentlyContinue
             if ($svc -and $svc.Status -eq 'Running') {
-              Write-Output "Stopping service $serviceName..."
               Stop-Service $serviceName -Force
-            } else {
-              Write-Output "Service $serviceName not running or not found"
             }
           } -ArgumentList $env:VM_CONSUMER_SERVICE
 
@@ -162,10 +175,10 @@ jobs:
             New-Item -Path $path2 -ItemType Directory -Force | Out-Null
           } -ArgumentList $env:VM_DEPLOY_FOLDER, $env:VM_DEPLOY_CONSUMER_FOLDER
 
-          Write-Host "=== Copying API files to $env:VM_DEPLOY_FOLDER ==="
+          Write-Host "=== Copying API files ==="
           Copy-Item -Path ".\publish-api\*" -Destination $env:VM_DEPLOY_FOLDER -Recurse -Force -ToSession $session -ErrorAction Stop
 
-          Write-Host "=== Copying Consumer files to $env:VM_DEPLOY_CONSUMER_FOLDER ==="
+          Write-Host "=== Copying Consumer files ==="
           Copy-Item -Path ".\publish-consumer\*" -Destination $env:VM_DEPLOY_CONSUMER_FOLDER -Recurse -Force -ToSession $session -ErrorAction Stop
 
           Write-Host "=== Installing or updating Consumer service via NSSM ==="
@@ -186,16 +199,25 @@ jobs:
 
           Write-Host "=== Restarting IIS and Consumer service ==="
           Invoke-Command -Session $session -ScriptBlock {
-            param($serviceName)
+            param($serviceName, $consumerDir)
             iisreset /start
             $svc = Get-Service $serviceName -ErrorAction SilentlyContinue
             if ($svc -and $svc.Status -ne 'Running') {
-              Write-Output "Starting service $serviceName..."
-              Start-Service $serviceName
+              Start-Service $serviceName -ErrorAction Stop
+              Start-Sleep -Seconds 5
+              Write-Output "Service $serviceName started. Checking logs..."
+              if (Test-Path "$consumerDir\consumer-error.log") {
+                Write-Output "--- consumer-error.log ---"
+                Get-Content "$consumerDir\consumer-error.log" -Tail 50
+              }
+              if (Test-Path "$consumerDir\consumer.log") {
+                Write-Output "--- consumer.log ---"
+                Get-Content "$consumerDir\consumer.log" -Tail 50
+              }
             } else {
               Write-Output "Service $serviceName already running"
             }
-          } -ArgumentList $env:VM_CONSUMER_SERVICE
+          } -ArgumentList $env:VM_CONSUMER_SERVICE, $env:VM_DEPLOY_CONSUMER_FOLDER
 
           Write-Host "=== Closing remote session ==="
           Remove-PSSession $session
