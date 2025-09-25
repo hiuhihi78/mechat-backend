@@ -32,7 +32,7 @@ jobs:
       - name: Publish MessageBroker.Consumer (Production)
         if: github.ref == 'refs/heads/main'
         run: |
-          ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.Infrastructure.MessageBroker.Consumer/MeChat.Infrastructure.MessageBroker.Consumer.csproj -c Release -o ./publish-consumer
+          ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.Infrastructure.MessageBroker.Consumer/MeChat.Infrastructure.MessageBroker.Consumer.csproj -c Release -r win-x64 -o ./publish-consumer
 
       - name: Upload API artifact
         if: github.ref == 'refs/heads/main'
