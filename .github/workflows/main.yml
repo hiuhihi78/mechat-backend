@@ -135,6 +135,9 @@ jobs:
           VM_DEPLOY_FOLDER: ${{ secrets.VM_DEPLOY_FOLDER }}
         run: |
           Write-Host "=== COPY API ==="
+          Set-Item WSMan:\localhost\Client\AllowUnencrypted -Value $true
+          Set-Item WSMan:\localhost\Client\Auth\Basic -Value $true
+          Set-Item WSMan:\localhost\Client\TrustedHosts -Value $env:VM_HOST -Force
           $sec = ConvertTo-SecureString $env:VM_PASSWORD -AsPlainText -Force
           $cred = New-Object PSCredential ($env:VM_USERNAME, $sec)
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
@@ -161,6 +164,9 @@ jobs:
           VM_DEPLOY_CONSUMER_FOLDER: ${{ secrets.VM_DEPLOY_CONSUMER_FOLDER }}
         run: |
           Write-Host "=== COPY Consumer ==="
+          Set-Item WSMan:\localhost\Client\AllowUnencrypted -Value $true
+          Set-Item WSMan:\localhost\Client\Auth\Basic -Value $true
+          Set-Item WSMan:\localhost\Client\TrustedHosts -Value $env:VM_HOST -Force
           $sec = ConvertTo-SecureString $env:VM_PASSWORD -AsPlainText -Force
           $cred = New-Object PSCredential ($env:VM_USERNAME, $sec)
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
@@ -182,6 +188,9 @@ jobs:
           VM_PASSWORD: ${{ secrets.VM_PASSWORD }}
         run: |
           Write-Host "=== START API (IIS) ==="
+          Set-Item WSMan:\localhost\Client\AllowUnencrypted -Value $true
+          Set-Item WSMan:\localhost\Client\Auth\Basic -Value $true
+          Set-Item WSMan:\localhost\Client\TrustedHosts -Value $env:VM_HOST -Force
           $sec = ConvertTo-SecureString $env:VM_PASSWORD -AsPlainText -Force
           $cred = New-Object PSCredential ($env:VM_USERNAME, $sec)
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
@@ -203,6 +212,9 @@ jobs:
           VM_CONSUMER_SERVICE: ${{ secrets.VM_CONSUMER_SERVICE }}
         run: |
           Write-Host "=== START Consumer ==="
+          Set-Item WSMan:\localhost\Client\AllowUnencrypted -Value $true
+          Set-Item WSMan:\localhost\Client\Auth\Basic -Value $true
+          Set-Item WSMan:\localhost\Client\TrustedHosts -Value $env:VM_HOST -Force
           $sec = ConvertTo-SecureString $env:VM_PASSWORD -AsPlainText -Force
           $cred = New-Object PSCredential ($env:VM_USERNAME, $sec)
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
