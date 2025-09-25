@@ -25,12 +25,14 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       - name: Publish MeChat.API
         if: github.ref == 'refs/heads/main'
-        run: dotnet publish src/MeChat.API/MeChat.API.csproj -c Release -o ./publish-api
+        run: |
+          ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.API/MeChat.API.csproj -c Release -o ./publish-api
+
       - name: Publish Consumer (self-contained exe)
         if: github.ref == 'refs/heads/main'
         run: |
-          dotnet publish src/MeChat.Infrastructure.MessageBroker.Consumer/MeChat.Infrastructure.MessageBroker.Consumer.csproj `
-            -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ./publish-consumer
+          ASPNETCORE_ENVIRONMENT=Production dotnet publish src/MeChat.Infrastructure.MessageBroker.Consumer/MeChat.Infrastructure.MessageBroker.Consumer.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ./publish-consumer
+
       - name: Upload API artifact
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
