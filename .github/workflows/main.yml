@@ -121,21 +121,24 @@ jobs:
           while (-not $stopped -and $attempt -lt $maxRetries) {
             $attempt++
             Write-Host "Attempt $attempt to stop service $env:VM_CONSUMER_SERVICE"
-            try {
-              Invoke-Command -Session $session -ScriptBlock {
-                param($svc)
-                nssm stop $svc
-                Start-Sleep -Seconds 5
-                $service = Get-Service $svc -ErrorAction SilentlyContinue
-                if ($service -and $service.Status -ne 'Stopped') {
-                  throw "Service $svc failed to stop. Current status: $($service.Status)"
-                }
-              } -ArgumentList $env:VM_CONSUMER_SERVICE
 
-              Write-Host "Service $env:VM_CONSUMER_SERVICE stopped successfully."
+            $result = Invoke-Command -Session $session -ScriptBlock {
+              param($svc)
+              nssm stop $svc | Out-Null
+              Start-Sleep -Seconds 5
+              $service = Get-Service $svc -ErrorAction SilentlyContinue
+              if ($service -and $service.Status -eq 'Stopped') {
+                Write-Output "Service $svc is stopped."
+                return $true
+              } else {
+                Write-Output "Service $svc still running. Status: $($service.Status)"
+                return $false
+              }
+            } -ArgumentList $env:VM_CONSUMER_SERVICE
+
+            if ($result -contains $true) {
               $stopped = $true
-            } catch {
-              Write-Warning "Failed to stop service. Error: $_"
+            } else {
               if ($attempt -lt $maxRetries) {
                 Write-Host "Retrying in 5 seconds..."
                 Start-Sleep -Seconds 5
@@ -254,26 +257,37 @@ jobs:
 
           $maxRetries = 5
           $attempt = 0
-          $success = $false
+          $started = $false
 
-          while (-not $success -and $attempt -lt $maxRetries) {
+          while (-not $started -and $attempt -lt $maxRetries) {
             $attempt++
             Write-Host "Attempt $attempt to start service $env:VM_CONSUMER_SERVICE"
-            try {
-              Invoke-Command -Session $session -ScriptBlock {
-                param($svc)
-                nssm start $svc
-                Start-Sleep -Seconds 5
-                $service = Get-Service $svc -ErrorAction Stop
-                if ($service.Status -ne 'Running') {
-                  throw "Service $svc failed to start. Current status: $($service.Status)"
-                }
-              } -ArgumentList $env:VM_CONSUMER_SERVICE
 
-              Write-Host "Service $env:VM_CONSUMER_SERVICE started successfully."
-              $success = $true
-            } catch {
-              Write-Warning "Failed to start service. Error: $_"
+            $result = Invoke-Command -Session $session -ScriptBlock {
+              param($svc)
+              $service = Get-Service $svc -ErrorAction SilentlyContinue
+              if ($service -and $service.Status -eq 'Running') {
+                Write-Output "Service $svc is already running."
+                return $true
+              }
+
+              nssm start $svc | Out-Null
+              Start-Sleep -Seconds 5
+
+              $service = Get-Service $svc -ErrorAction SilentlyContinue
+              if ($service -and $service.Status -eq 'Running') {
+                Write-Output "Service $svc started successfully."
+                return $true
+              } else {
+                Write-Output "Service $svc not running. Status: $($service.Status)"
+                return $false
+              }
+            } -ArgumentList $env:VM_CONSUMER_SERVICE
+
+            if ($result -contains $true) {
+              $started = $true
+            } else {
+              Write-Warning "Failed to start service."
               if ($attempt -lt $maxRetries) {
                 Write-Host "Retrying in 5 seconds..."
                 Start-Sleep -Seconds 5
@@ -281,7 +295,7 @@ jobs:
             }
           }
 
-          if (-not $success) {
+          if (-not $started) {
             throw "Service $env:VM_CONSUMER_SERVICE could not be started after $maxRetries attempts."
           }
 
