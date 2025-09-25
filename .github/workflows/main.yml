@@ -98,7 +98,7 @@ jobs:
     runs-on: windows-latest
     needs: stop_api
     steps:
-      - name: Stop Consumer service
+      - name: Stop Consumer service (with retry)
         shell: powershell
         env:
           VM_HOST: ${{ secrets.VM_HOST }}
@@ -113,7 +113,40 @@ jobs:
           $sec = ConvertTo-SecureString $env:VM_PASSWORD -AsPlainText -Force
           $cred = New-Object PSCredential ($env:VM_USERNAME, $sec)
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
-          Invoke-Command -Session $session -ScriptBlock { param($svc) nssm stop $svc } -ArgumentList $env:VM_CONSUMER_SERVICE
+
+          $maxRetries = 5
+          $attempt = 0
+          $stopped = $false
+
+          while (-not $stopped -and $attempt -lt $maxRetries) {
+            $attempt++
+            Write-Host "Attempt $attempt to stop service $env:VM_CONSUMER_SERVICE"
+            try {
+              Invoke-Command -Session $session -ScriptBlock {
+                param($svc)
+                nssm stop $svc
+                Start-Sleep -Seconds 5
+                $service = Get-Service $svc -ErrorAction SilentlyContinue
+                if ($service -and $service.Status -ne 'Stopped') {
+                  throw "Service $svc failed to stop. Current status: $($service.Status)"
+                }
+              } -ArgumentList $env:VM_CONSUMER_SERVICE
+
+              Write-Host "Service $env:VM_CONSUMER_SERVICE stopped successfully."
+              $stopped = $true
+            } catch {
+              Write-Warning "Failed to stop service. Error: $_"
+              if ($attempt -lt $maxRetries) {
+                Write-Host "Retrying in 5 seconds..."
+                Start-Sleep -Seconds 5
+              }
+            }
+          }
+
+          if (-not $stopped) {
+            throw "Service $env:VM_CONSUMER_SERVICE could not be stopped after $maxRetries attempts."
+          }
+
           Remove-PSSession $session
 
   copy_api:
@@ -203,7 +236,7 @@ jobs:
     runs-on: windows-latest
     needs: start_api
     steps:
-      - name: Start Consumer service
+      - name: Start Consumer service (with retry)
         shell: powershell
         env:
           VM_HOST: ${{ secrets.VM_HOST }}
@@ -218,5 +251,39 @@ jobs:
           $sec = ConvertTo-SecureString $env:VM_PASSWORD -AsPlainText -Force
           $cred = New-Object PSCredential ($env:VM_USERNAME, $sec)
           $session = New-PSSession -ComputerName $env:VM_HOST -Credential $cred -Authentication Basic
-          Invoke-Command -Session $session -ScriptBlock { param($svc) nssm start $svc } -ArgumentList $env:VM_CONSUMER_SERVICE
+
+          $maxRetries = 5
+          $attempt = 0
+          $success = $false
+
+          while (-not $success -and $attempt -lt $maxRetries) {
+            $attempt++
+            Write-Host "Attempt $attempt to start service $env:VM_CONSUMER_SERVICE"
+            try {
+              Invoke-Command -Session $session -ScriptBlock {
+                param($svc)
+                nssm start $svc
+                Start-Sleep -Seconds 5
+                $service = Get-Service $svc -ErrorAction Stop
+                if ($service.Status -ne 'Running') {
+                  throw "Service $svc failed to start. Current status: $($service.Status)"
+                }
+              } -ArgumentList $env:VM_CONSUMER_SERVICE
+
+              Write-Host "Service $env:VM_CONSUMER_SERVICE started successfully."
+              $success = $true
+            } catch {
+              Write-Warning "Failed to start service. Error: $_"
+              if ($attempt -lt $maxRetries) {
+                Write-Host "Retrying in 5 seconds..."
+                Start-Sleep -Seconds 5
+              }
+            }
+          }
+
+          if (-not $success) {
+            throw "Service $env:VM_CONSUMER_SERVICE could not be started after $maxRetries attempts."
+          }
+
           Remove-PSSession $session
+
