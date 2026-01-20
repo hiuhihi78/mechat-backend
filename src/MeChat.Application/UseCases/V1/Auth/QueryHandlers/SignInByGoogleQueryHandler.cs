@@ -48,18 +48,15 @@ public class SignInByGoogleQueryHandler : IQueryHandler<Query.SignInByGoogle, Re
         {
             return await authUtil.GenerateToken(user);
         }
-            
+
         //New User
-        Domain.Entities.User newUser = new Domain.Entities.User
-        {
-            Username = null,
-            Password = null,
-            Fullname = payload.Name,
-            RoleId = AppConstants.Role.User,
-            Email = payload.Email,
-            Avatar = payload.Picture,
-            Status = AppConstants.User.Status.Activate,
-        };
+        var newUser = Domain.Entities.User.CreateForTest(
+            email: payload.Email,
+            fullname: payload.Name,
+            avatar: payload.Picture,
+            defaultRoleId: AppConstants.Role.User
+        );
+
         userRepository.Add(newUser);
         await unitOfWorkEF.SaveChangeAsync();
 

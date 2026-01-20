@@ -8,7 +8,7 @@ public class UserSocial : Entity, IDateTracking
     public int SocialId { get; set; }
     public string AccountSocialId { set; get; } = string.Empty;
     public DateTimeOffset CreatedDate { get; set; }
-    public DateTimeOffset? ModifiledDate { get; set; }
+    public DateTimeOffset? ModifiedDate { get; set; }
 
     public virtual User? User { get; set; }
     public virtual Social? Social { get; set; }

@@ -8,6 +8,7 @@ using MeChat.Common.UseCases.V1.User;
 using MeChat.Domain.Entities;
 using MeChat.Infrastructure.RealTime.Hubs;
 using System.Text.Json;
+using MediatR;
 
 namespace MeChat.Application.UseCases.V1.User.CommandHandlers;
 public class MakeUserFriendRelationshipCommandHandler : ICommandHandler<Command.MakeUserFriendRelationship>
@@ -16,21 +17,24 @@ public class MakeUserFriendRelationshipCommandHandler : ICommandHandler<Command.
     private readonly IRepository<Domain.Entities.Friend> friendRepository;
     private readonly IRepositoryBase<Domain.Entities.Notification, Guid> notificationRepository;
     private readonly IMapper mapper;
+    private readonly IMediator mediator;
 
     private readonly IRealTimeContext<ConnectionHub> notificationHubContext;
 
     public MakeUserFriendRelationshipCommandHandler(
         IRepositoryBase<Domain.Entities.User, Guid> userRepository,
         IRepository<Domain.Entities.Friend> friendRepository,
-        IRepositoryBase<Domain.Entities.Notification, Guid> notificationRepository, 
+        IRepositoryBase<Domain.Entities.Notification, Guid> notificationRepository,
         IRealTimeContext<ConnectionHub> notificationHubContext,
-        IMapper mapper)
+        IMapper mapper,
+        IMediator mediator)
     {
         this.userRepository = userRepository;
         this.friendRepository = friendRepository;
         this.notificationRepository = notificationRepository;
         this.notificationHubContext = notificationHubContext;
         this.mapper = mapper;
+        this.mediator = mediator;
     }
 
     public async Task<Result> Handle(Command.MakeUserFriendRelationship request, CancellationToken cancellationToken)
@@ -42,7 +46,7 @@ public class MakeUserFriendRelationshipCommandHandler : ICommandHandler<Command.
         if (!AppConstants.FriendStatusRequest.STATUS.Contains(request.Status))
             return Result.Failure("Invalid status");
 
-        if(request.FriendId == null)
+        if (request.FriendId == null)
             return Result.Failure("Invalid friend");
 
         var user = await userRepository.FindByIdAsync(request.UserId);
@@ -67,8 +71,14 @@ public class MakeUserFriendRelationshipCommandHandler : ICommandHandler<Command.
                 SpecifierId = request.UserId,
                 Status = AppConstants.FriendStatus.WatitingAccept,
             };
+            friendRepository.Add(friend);
 
-            await SendNotificationAsync(Guid.Parse(request.FriendId.ToString()!), request.UserId, AppConstants.FriendStatus.WatitingAccept);
+            await mediator.Publish(
+                new DomainEvent.FriendRequestSent(
+                    Guid.Parse(request.FriendId.ToString()!),
+                    request.UserId,
+                    this.GetNotificationType(AppConstants.NotificationType.FriendRequest)
+                ));
             return Result.Success<object>(new { NewRelationshipStatus = AppConstants.FriendRealtionship.WatitingAccept });
         }
 
@@ -95,7 +105,7 @@ public class MakeUserFriendRelationshipCommandHandler : ICommandHandler<Command.
             case AppConstants.FriendStatusRequest.WatitingAccept:
                 //unfriend -> watting => oke
                 //accept -> watting => invalid
-                if (friendRelationship.Status == AppConstants.FriendStatus.Accepted) 
+                if (friendRelationship.Status == AppConstants.FriendStatus.Accepted)
                     return Result.Failure("Invalid request");
                 //block -> watting => check is blocker
                 if (friendRelationship.Status == AppConstants.FriendStatus.Block && request.UserId != friendRelationship.SpecifierId)
@@ -108,12 +118,22 @@ public class MakeUserFriendRelationshipCommandHandler : ICommandHandler<Command.
                     newFriendRelationship = AppConstants.FriendRealtionship.Accepted;
 
                     //send noti accepted
-                    await SendNotificationAsync(Guid.Parse(request.FriendId.ToString()!), request.UserId, AppConstants.FriendStatus.Accepted);
+                    await mediator.Publish(
+                        new DomainEvent.FriendRequestSent(
+                            Guid.Parse(request.FriendId.ToString()!),
+                            request.UserId,
+                            this.GetNotificationType(AppConstants.FriendStatus.Accepted)
+                        ));
                     break;
                 }
 
                 //send noti requset add friend
-                await SendNotificationAsync(Guid.Parse(request.FriendId.ToString()!), request.UserId, AppConstants.FriendStatus.WatitingAccept);
+                await mediator.Publish(
+                    new DomainEvent.FriendRequestSent(
+                        Guid.Parse(request.FriendId.ToString()!),
+                        request.UserId,
+                        this.GetNotificationType(AppConstants.FriendStatus.WatitingAccept)
+                    ));
 
                 friendshipStatusUpdate = AppConstants.FriendStatus.WatitingAccept;
                 newFriendRelationship = AppConstants.FriendRealtionship.WatitingAccept;
@@ -128,7 +148,12 @@ public class MakeUserFriendRelationshipCommandHandler : ICommandHandler<Command.
                 newFriendRelationship = AppConstants.FriendRealtionship.Accepted;
 
                 //send noti accepted
-                await SendNotificationAsync(Guid.Parse(request.FriendId.ToString()!), request.UserId, AppConstants.FriendStatus.Accepted);
+                await mediator.Publish(
+                    new DomainEvent.FriendRequestSent(
+                        Guid.Parse(request.FriendId.ToString()!),
+                        request.UserId,
+                        this.GetNotificationType(AppConstants.FriendStatus.Accepted)
+                    ));
                 break;
             case AppConstants.FriendStatusRequest.Block:
                 friendshipStatusUpdate = AppConstants.FriendStatus.Block;
@@ -149,35 +174,12 @@ public class MakeUserFriendRelationshipCommandHandler : ICommandHandler<Command.
         return Result.Success<object>(new { NewRelationshipStatus = newFriendRelationship });
     }
 
-    public async Task SendNotificationAsync(Guid receiverId, Guid requesterId, int type)
+    private int GetNotificationType(int type)
     {
-        var receiver = await userRepository.FindByIdAsync(receiverId);
-        var requester = await userRepository.FindByIdAsync(requesterId);
-
-        int notificationType;
-
         if (type == AppConstants.FriendStatus.WatitingAccept)
-            notificationType = AppConstants.NotificationType.FriendRequest;
-        else
-            notificationType = AppConstants.NotificationType.FriendRequestAccepted;
-
-        Domain.Entities.Notification notification = new()
-        {
-            Id = Guid.NewGuid(),
-            ReceiverId = receiver.Id,
-            RequesterId = requester.Id,
-            Type = notificationType,
-            CreatedDate = DateTime.Now,
-            IsReaded = false,
-        };
-
-        notificationRepository.Add(notification);
-
-        var notificatonSend = mapper.Map<Common.UseCases.V1.Notification.Response.Notification>(notification);
-        notificatonSend = notificatonSend with { RequesterName = requester.Fullname, Image = requester.Avatar };
-
-        var message = JsonSerializer.Serialize(notificatonSend);
-        await notificationHubContext.SendMessageAsync(AppConstants.RealTime.Method.Notification, receiverId, message);
+            return AppConstants.NotificationType.FriendRequest;
+            
+        return AppConstants.NotificationType.FriendRequestAccepted;
     }
 
 }

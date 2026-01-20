@@ -8,7 +8,7 @@ public static class StorageExtention
 {
 
     #region Add Storage
-    public static void AddStorage(this IServiceCollection services, IConfiguration configuration)
+    public static void AddInfrastructureStorage(this IServiceCollection services, IConfiguration configuration)
     {
         Common.Shared.Configurations.DistributedStorage distributedStorageConfig = new();
         configuration.GetSection(nameof(Common.Shared.Configurations.DistributedStorage)).Bind(distributedStorageConfig);

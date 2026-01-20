@@ -1,4 +1,5 @@
-﻿using MeChat.Application.UseCases.V1.Auth.Utils;
+﻿using MeChat.Application.Abstractions.Emails;
+using MeChat.Application.UseCases.V1.Auth.Utils;
 using MeChat.Common.Abstractions.Data.EntityFramework;
 using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
 using MeChat.Common.Abstractions.Messages.DomainEvents;
@@ -14,6 +15,8 @@ public class SignUpCommandHandler : ICommandHandler<Command.SignUp>
     private readonly IConfiguration configuration;
     private readonly IRepositoryBase<Domain.Entities.User, Guid> userReposiory;
     private readonly IMessageBrokerProducerEmail messageBrokerProducerEmail;
+    private readonly IUnitOfWork unitOfWork;
+    private readonly IEmailTemplateService emailTemplateService;
 
     private readonly AuthUtil authUtil;
 
@@ -21,49 +24,48 @@ public class SignUpCommandHandler : ICommandHandler<Command.SignUp>
         (IConfiguration configuration,
         IRepositoryBase<Domain.Entities.User, Guid> userReposiory,
         IMessageBrokerProducerEmail messageBrokerProducerEmail,
+        IUnitOfWork unitOfWork,
+        IEmailTemplateService emailTemplateService,
         AuthUtil authUtil)
     {
         this.configuration = configuration;
         this.userReposiory = userReposiory;
         this.authUtil = authUtil;
+        this.unitOfWork = unitOfWork;
+        this.emailTemplateService = emailTemplateService;
         this.messageBrokerProducerEmail = messageBrokerProducerEmail;
 
     }
 
     public async Task<Result> Handle(Command.SignUp request, CancellationToken cancellationToken)
     {
-        var isEmailExisted = await userReposiory.Any(x => x.Email == request.Email);
-        if (isEmailExisted)
-            return Result.Failure("Email has been used in orthor account!");
 
-        var isUsernameExisted = await userReposiory.Any(x => x.Username == request.Username);
-        if(isUsernameExisted)
-            return Result.Failure("Username has been used in orthor account!");
+        if (await userReposiory.Any(x => x.Email == request.Email))
+            return Result.Failure("Email has been used in other account!");
 
-        Domain.Entities.User user = new Domain.Entities.User()
-        {
-            Id = Guid.NewGuid(),
-            Username = request.Username,
-            Password = request.Password,
-            RoleId = AppConstants.Role.User,
-            Email = request.Email,
-            Fullname = request.Username,
-            Status = AppConstants.User.Status.UnActivate
-        };
+        if (await userReposiory.Any(x => x.Username == request.Username))
+            return Result.Failure("Username has been used in other account!");
+
+        var user = Domain.Entities.User.SignUp(
+            id: Guid.NewGuid(),
+            username: request.Username,
+            email: request.Email,
+            passwordHash: request.Password,
+            fullname: request.Username,
+            defaultRoleId: AppConstants.Role.User
+        );
 
         userReposiory.Add(user);
+        await unitOfWork.SaveChangeAsync();
 
-        //send mail
-        string subject = "MeChat - Confirm Sign up account";
-        string enpoint = $"{configuration["FrontEnd:Endpoint"] ?? string.Empty}/confirmSignUp";
-        string accessToken = authUtil.GenerateTokenForSignUp(request.Email);
-        string content =
-        $@"
-        <div>
-            <p>Please click to link below to confirm!</p><br/>
-            <a href='{enpoint}?accessToken={accessToken}'>click here</a>
-        </div>";
+        // Send email
+        var subject = "MeChat - Confirm Your Account";
 
+        var frontEnd = configuration["FrontEnd:Endpoint"] ?? string.Empty;
+        var accessToken = authUtil.GenerateTokenForSignUp(request.Email);
+        var tokenEncoded = Uri.EscapeDataString(accessToken);
+        var confirmUrl = $"{frontEnd.TrimEnd('/')}/confirmSignUp?accessToken={tokenEncoded}";
+        var content = emailTemplateService.BuildSignUpConfirmationEmail(confirmUrl);
         await messageBrokerProducerEmail.SendMailAsync(request.Email, subject, content);
 
         return Result.Success();

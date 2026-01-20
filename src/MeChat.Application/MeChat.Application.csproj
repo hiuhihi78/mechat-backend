@@ -1,13 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
+    <Authors>hiuhihi78</Authors>
+    <Version>1.0.0.1</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Abstractions\" />
     <Folder Include="DependencyInjection\Options\" />
     <Folder Include="UseCases\V1\Storage\QueryHandler\" />
     <Folder Include="UseCases\V2\" />
@@ -28,7 +29,6 @@
     <ProjectReference Include="..\MeChat.Infrastructure.DistributedCache\MeChat.Infrastructure.DistributedCache.csproj" />
     <ProjectReference Include="..\MeChat.Infrastructure.RealTime\MeChat.Infrastructure.RealTime.csproj" />
     <ProjectReference Include="..\MeChat.Infrastructure.Service\MeChat.Infrastructure.Service.csproj" />
-    <ProjectReference Include="..\MeChat.Persistence\MeChat.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

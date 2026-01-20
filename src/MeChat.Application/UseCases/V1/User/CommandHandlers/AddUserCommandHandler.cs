@@ -27,6 +27,6 @@ public class AddUserCommandHandler : ICommandHandler<Command.AddUser>
         user.RoleId = AppConstants.Role.User;
 
         userRepository.Add(user);
-        return Task.FromResult<Result>(Result.Success());
+        return Task.FromResult(Result.Success());
     }
 }

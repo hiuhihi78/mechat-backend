@@ -8,7 +8,7 @@ namespace MeChat.Infrastructure.MessageBroker.Producer.DependencyInjection.Exten
 public static class MessageBrokerExtention
 {
     #region Add Message Broker
-    public static void AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
+    public static void AddInfrastructureMessageBroker(this IServiceCollection services, IConfiguration configuration)
     {
         Common.Shared.Configurations.MessageBroker messageBrokerConfig = new();
         configuration.GetSection(nameof(MessageBroker)).Bind(messageBrokerConfig);

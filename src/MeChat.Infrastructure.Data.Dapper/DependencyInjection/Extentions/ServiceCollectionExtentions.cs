@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace MeChat.Infrastructure.Dapper.DependencyInjection.Extentions;
 public static class ServiceCollectionExtentions
 {
-    public static void AddSqlServerDapper(this IServiceCollection services)
+    public static void AddInfrastructureDapper(this IServiceCollection services)
     {
         services.AddTransient<ApplicationDbContext>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
