@@ -1,28 +1,29 @@
 ﻿using Google.Apis.Auth;
 using MeChat.Application.UseCases.V1.Auth.Utils;
-using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Abstractions.Services;
 using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.Auth;
+using MeChat.Domain.Abstractions.Data.Dapper;
+using MeChat.Domain.Abstractions.Data.EntityFramework;
+using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
+using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
 using MeChat.Domain.Entities;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.Auth;
 using Microsoft.Extensions.Configuration;
 
 namespace MeChat.Application.UseCases.V1.Auth.QueryHandlers;
 public class SignInByGoogleQueryHandler : IQueryHandler<Query.SignInByGoogle, Response.Authenticated>
 {
     private readonly IConfiguration configuration;
-    private readonly Common.Abstractions.Data.Dapper.IUnitOfWork unitOfWorkDapper;
-    private readonly Common.Abstractions.Data.EntityFramework.IUnitOfWork unitOfWorkEF;
+    private readonly IUnitOfWork unitOfWorkDapper;
+    private readonly Domain.Abstractions.Data.EntityFramework.IUnitOfWork unitOfWorkEF;
     private readonly IRepositoryBase<Domain.Entities.User, Guid> userRepository;
     private readonly IRepository<UserSocial> userSocialRepository;
     private readonly AuthUtil authUtil;
 
     public SignInByGoogleQueryHandler(
-        IConfiguration configuration, 
-        Common.Abstractions.Data.Dapper.IUnitOfWork unitOfWorkDapper, 
-        Common.Abstractions.Data.EntityFramework.IUnitOfWork unitOfWorkEF, 
+        IConfiguration configuration,
+        IUnitOfWork unitOfWorkDapper,
+        Domain.Abstractions.Data.EntityFramework.IUnitOfWork unitOfWorkEF, 
         IRepositoryBase<Domain.Entities.User, Guid> userRepository, 
         IRepository<UserSocial> userSocialRepository,
         AuthUtil authUtil)

@@ -1,10 +1,10 @@
 ﻿using MeChat.Common.Abstractions.Data.EntityFramework;
-using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Abstractions.Services;
 using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.Auth;
+using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
+using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Services.External;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.Auth;
 
 namespace MeChat.Application.UseCases.V1.Auth.CommandHandlers;
 public class ConfirmSignUpCommandHandler : ICommandHandler<Command.ConfirmSignUp>

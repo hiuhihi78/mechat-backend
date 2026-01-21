@@ -1,12 +1,12 @@
 ﻿using MeChat.Application.Abstractions.Emails;
 using MeChat.Application.UseCases.V1.Auth.Utils;
-using MeChat.Common.Abstractions.Data.EntityFramework;
-using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Abstractions.Services;
 using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.Auth;
+using MeChat.Domain.Abstractions.Data.EntityFramework;
+using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
+using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Services.External;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.Auth;
 using Microsoft.Extensions.Configuration;
 
 namespace MeChat.Application.UseCases.V1.Auth.CommandHandlers;

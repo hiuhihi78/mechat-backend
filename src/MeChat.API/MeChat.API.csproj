@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MeChat.Application\MeChat.Application.csproj" />
-    <ProjectReference Include="..\MeChat.Common\MeChat.Common.csproj" />
     <ProjectReference Include="..\MeChat.Domain\MeChat.Domain.csproj" />
     <ProjectReference Include="..\MeChat.Infrastructure.Persistence\MeChat.Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\MeChat.Infrastructure.RealTime\MeChat.Infrastructure.RealTime.csproj" />

@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Abstractions.RealTime;
 using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.User;
 using MeChat.Domain.Entities;
 using MeChat.Infrastructure.RealTime.Hubs;
 using System.Text.Json;
 using MediatR;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.User;
+using MeChat.Domain.Abstractions.RealTime;
+using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
 
 namespace MeChat.Application.UseCases.V1.User.CommandHandlers;
 public class MakeUserFriendRelationshipCommandHandler : ICommandHandler<Command.MakeUserFriendRelationship>

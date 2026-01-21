@@ -1,21 +1,22 @@
-﻿using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Abstractions.Services;
-using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.User;
+﻿using MeChat.Common.Shared.Constants;
+using MeChat.Domain.Abstractions.Data.EntityFramework;
+using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
+using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Services.External;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.User;
 
 namespace MeChat.Application.UseCases.V1.User.CommandHandlers;
 public class UpdateUserInfoCommandHandler : ICommandHandler<Command.UpdateUserInfo>
 {
     private readonly IRepositoryBase<Domain.Entities.User, Guid> userRepository;
-    private readonly Common.Abstractions.Data.EntityFramework.IUnitOfWork unitOfWorkEF;
+    private readonly IUnitOfWork unitOfWorkEF;
     private readonly IStorageService storageService;
 
     public UpdateUserInfoCommandHandler(
         IRepositoryBase<Domain.Entities.User, Guid> userRepository, 
         IStorageService storageService,
-        Common.Abstractions.Data.EntityFramework.IUnitOfWork unitOfWorkEF)
+        IUnitOfWork unitOfWorkEF)
     {
         this.userRepository = userRepository;
         this.storageService = storageService;

@@ -1,5 +1,5 @@
-﻿using MeChat.Common.Abstractions.Data.Dapper;
-using MeChat.Common.Abstractions.Data.Dapper.Repositories;
+﻿using MeChat.Domain.Abstractions.Data.Dapper;
+using MeChat.Domain.Abstractions.Data.Dapper.Repositories;
 using MeChat.Infrastructure.Dapper.Repositories;
 using MeChat.Infrastructure.Data.Dapper.Repositories;
 

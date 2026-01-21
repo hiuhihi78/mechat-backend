@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using MeChat.Common.Abstractions.Data.Dapper;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Abstractions.Services;
 using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Exceptions;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.User;
+using MeChat.Domain.Abstractions.Data.Dapper;
+using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Services.External;
+using MeChat.Domain.Shared.Exceptions;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.User;
 
 namespace MeChat.Application.UseCases.V1.User.QueryHandlers;
 public class GetUserQueryHandler : IQueryHandler<Query.GetUserById, Response.User>

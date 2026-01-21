@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
 using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.User;
+using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
+using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.User;
 
 namespace MeChat.Application.UseCases.V1.User.QueryHandlers;
 public class GetUserPublicInfoQueryHandler : IQueryHandler<Query.GetUserPublicInfo, Response.UserPublicInfo>

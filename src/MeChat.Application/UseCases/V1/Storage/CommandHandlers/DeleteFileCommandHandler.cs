@@ -1,7 +1,7 @@
-﻿using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Abstractions.Services;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.Storage;
+﻿using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Services.External;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.Storage;
 
 namespace MeChat.Application.UseCases.V1.Storage.CommandHandlers;
 public class DeleteFileCommandHandler : ICommandHandler<Command.DeleteFile>

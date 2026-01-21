@@ -1,6 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus.Administration;
 using MassTransit;
-using MeChat.Common.MessageBroker.Email;
+using MeChat.Domain.Abstractions.MessageBroker.Email;
+using MeChat.Domain.Shared.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +11,7 @@ public static class MessageBrokerExtention
     #region Add Message Broker
     public static void AddInfrastructureMessageBroker(this IServiceCollection services, IConfiguration configuration)
     {
-        Common.Shared.Configurations.MessageBroker messageBrokerConfig = new();
+        Domain.Shared.Configurations.MessageBroker messageBrokerConfig = new();
         configuration.GetSection(nameof(MessageBroker)).Bind(messageBrokerConfig);
 
         switch (messageBrokerConfig.Mode)
@@ -18,10 +19,10 @@ public static class MessageBrokerExtention
             //case nameof(Common.Shared.Configurations.MessageBroker.InMemory):
             //    services.AddInMemory(configuration);
             //    break;
-            case nameof(Common.Shared.Configurations.MessageBroker.RabbitMq):
+            case nameof(Domain.Shared.Configurations.MessageBroker.RabbitMq):
                 services.AddRabbitMq(configuration);
                 break;
-            case nameof(Common.Shared.Configurations.MessageBroker.AzureServiceBus):
+            case nameof(Domain.Shared.Configurations.MessageBroker.AzureServiceBus):
                 services.AzureServiceBus(configuration);
                 break;
             default:
@@ -47,10 +48,10 @@ public static class MessageBrokerExtention
     #region RabbitMq
     private static void AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
     {
-        var messageBrokerConfig = new Common.Shared.Configurations.MessageBroker();
+        var messageBrokerConfig = new Domain.Shared.Configurations.MessageBroker();
         configuration.GetSection(nameof(MessageBroker)).Bind(messageBrokerConfig);
 
-        Common.Shared.Configurations.RabbitMq rabbitMqConfiguration = messageBrokerConfig.RabbitMq;
+        RabbitMq rabbitMqConfiguration = messageBrokerConfig.RabbitMq;
 
         services.AddMassTransit(configuration =>
         {
@@ -72,10 +73,10 @@ public static class MessageBrokerExtention
     #region AzureServiceBus
     private static void AzureServiceBus(this IServiceCollection services, IConfiguration configuration)
     {
-        var messageBrokerConfig = new Common.Shared.Configurations.MessageBroker();
+        var messageBrokerConfig = new Domain.Shared.Configurations.MessageBroker();
         configuration.GetSection(nameof(MessageBroker)).Bind(messageBrokerConfig);
 
-        Common.Shared.Configurations.AzureServiceBus azureServiceBusConfig = messageBrokerConfig.AzureServiceBus;
+        AzureServiceBus azureServiceBusConfig = messageBrokerConfig.AzureServiceBus;
 
         AddAzureServiceBusQueues(azureServiceBusConfig);
 
@@ -91,7 +92,7 @@ public static class MessageBrokerExtention
         });
     }
 
-    private static void AddAzureServiceBusQueues(Common.Shared.Configurations.AzureServiceBus azureServiceBusConfig)
+    private static void AddAzureServiceBusQueues(AzureServiceBus azureServiceBusConfig)
     {
         var azureAdmin = new ServiceBusAdministrationClient(azureServiceBusConfig.ConnectionString);
 

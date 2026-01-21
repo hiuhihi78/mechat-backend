@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Abstractions.RealTime;
 using MeChat.Common.Shared.Constants;
-using MeChat.Common.UseCases.V1.User;
+using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
+using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.RealTime;
+using MeChat.Domain.UseCases.V1.User;
 using MeChat.Infrastructure.RealTime.Hubs;
 using System.Text.Json;
 
@@ -47,7 +47,7 @@ public class FriendRequestSentDomainEventHandler : IDomainEventHandler<DomainEve
 
         notificationRepository.Add(notification);
 
-        var notificatonSend = mapper.Map<Common.UseCases.V1.Notification.Response.Notification>(notification);
+        var notificatonSend = mapper.Map<Domain.UseCases.V1.Notification.Response.Notification>(notification);
         notificatonSend = notificatonSend with { RequesterName = requester.Fullname, Image = requester.Avatar };
 
         var message = JsonSerializer.Serialize(notificatonSend);

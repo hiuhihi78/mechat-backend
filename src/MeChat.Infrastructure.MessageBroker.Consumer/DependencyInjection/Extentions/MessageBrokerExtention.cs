@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using MeChat.Domain.Shared.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +10,7 @@ public static class MessageBrokerExtention
     #region Add Message Broker
     public static void AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
     {
-        Common.Shared.Configurations.MessageBroker messageBrokerConfig = new();
+        Domain.Shared.Configurations.MessageBroker messageBrokerConfig = new();
         configuration.GetSection(nameof(MessageBroker)).Bind(messageBrokerConfig);
 
         switch (messageBrokerConfig.Mode)
@@ -17,10 +18,10 @@ public static class MessageBrokerExtention
             //case nameof(Common.Shared.Configurations.MessageBroker.InMemory):
             //    services.AddInMemory(configuration);
             //    break;
-            case nameof(Common.Shared.Configurations.MessageBroker.RabbitMq):
+            case nameof(Domain.Shared.Configurations.MessageBroker.RabbitMq):
                 services.AddRabbitMq(configuration);
                 break;
-            case nameof(Common.Shared.Configurations.MessageBroker.AzureServiceBus):
+            case nameof(Domain.Shared.Configurations.MessageBroker.AzureServiceBus):
                 services.AzureServiceBus(configuration);
                 break;
             default:
@@ -51,7 +52,7 @@ public static class MessageBrokerExtention
         var messageBrokerConfig = new Common.Shared.Configurations.MessageBroker();
         configuration.GetSection(nameof(MessageBroker)).Bind(messageBrokerConfig);
 
-        Common.Shared.Configurations.RabbitMq rabbitMqConfiguration = messageBrokerConfig.RabbitMq;
+        RabbitMq rabbitMqConfiguration = messageBrokerConfig.RabbitMq;
 
         services.AddMassTransit(configuration =>
         {
@@ -77,7 +78,7 @@ public static class MessageBrokerExtention
         var messageBrokerConfig = new Common.Shared.Configurations.MessageBroker();
         configuration.GetSection(nameof(MessageBroker)).Bind(messageBrokerConfig);
 
-        Common.Shared.Configurations.AzureServiceBus azureServiceBusConfig = messageBrokerConfig.AzureServiceBus;
+        AzureServiceBus azureServiceBusConfig = messageBrokerConfig.AzureServiceBus;
 
         services.AddMassTransit(configuration =>
         {

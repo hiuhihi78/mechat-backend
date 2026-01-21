@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MeChat.Common\MeChat.Common.csproj" />
+    <ProjectReference Include="..\MeChat.Domain\MeChat.Domain.csproj" />
   </ItemGroup>
 
 </Project>

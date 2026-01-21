@@ -1,8 +1,8 @@
 ﻿using Dapper;
-using MeChat.Common.Abstractions.Data.Dapper.Repositories;
 using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Enumerations;
+using MeChat.Domain.Abstractions.Data.Dapper.Repositories;
 using MeChat.Domain.Entities;
+using MeChat.Domain.Shared.Enumerations;
 using Microsoft.Data.SqlClient;
 
 namespace MeChat.Infrastructure.Dapper.Repositories;
@@ -211,6 +211,16 @@ public class UserRepository : IUserRepository
         var result = await connection.QuerySingleOrDefaultAsync<Domain.Entities.User>(sql);
         await connection.DisposeAsync();
         return result;
+    }
+    #endregion
+
+    #region GetUserByUsername
+    public async Task<User?> GetUserByUsername(string username)
+    {
+        var sql = "SELECT * FROM [User] WHERE Username = @Username";
+        using var conn = context.GetConnection();
+        await conn.OpenAsync();
+        return await conn.ExecuteScalarAsync<User>(sql, new { Username = username });
     }
     #endregion
 }

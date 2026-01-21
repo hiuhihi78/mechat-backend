@@ -1,5 +1,5 @@
-﻿using MeChat.Common.Abstractions.Data.EntityFramework;
-using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
+﻿using MeChat.Domain.Abstractions.Data.EntityFramework;
+using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
 using MeChat.Infrastructure.Persistence.Interceptors;
 using MeChat.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;

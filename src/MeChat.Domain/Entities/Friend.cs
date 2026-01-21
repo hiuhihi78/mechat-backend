@@ -1,5 +1,4 @@
-﻿using MeChat.Domain.Abstractions;
-using MeChat.Domain.Abstractions.Enitites;
+﻿using MeChat.Domain.Abstractions.Enitites;
 
 namespace MeChat.Domain.Entities;
 public class Friend : Entity, IDateTracking

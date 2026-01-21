@@ -1,5 +1,5 @@
-﻿using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Domain.Abstractions;
+﻿using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
+using MeChat.Domain.Abstractions.Enitites;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 

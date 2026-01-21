@@ -1,4 +1,4 @@
-﻿using MeChat.Common.Abstractions.Data.EntityFramework;
+﻿using MeChat.Domain.Abstractions.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Runtime.InteropServices;
 

@@ -1,5 +1,5 @@
-﻿using MeChat.Common.Abstractions.Services;
-using MeChat.Common.Shared.Authentication;
+﻿using MeChat.Common.Shared.Authentication;
+using MeChat.Domain.Abstractions.Services.External;
 using MeChat.Infrastructure.Service.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;

@@ -1,5 +1,5 @@
-﻿using MeChat.Common.Abstractions.RealTime;
-using MeChat.Common.Shared.Constants;
+﻿using MeChat.Common.Shared.Constants;
+using MeChat.Domain.Abstractions.RealTime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 

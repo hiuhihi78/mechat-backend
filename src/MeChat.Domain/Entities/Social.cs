@@ -1,4 +1,4 @@
-﻿using MeChat.Domain.Abstractions;
+﻿using MeChat.Domain.Abstractions.Enitites;
 
 namespace MeChat.Domain.Entities;
 public class Social : EntityBase<int>
