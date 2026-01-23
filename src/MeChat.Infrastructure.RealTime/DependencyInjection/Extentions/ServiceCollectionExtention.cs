@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MeChat.Infrastructure.RealTime.Hubs;
-using MeChat.Common.Shared.Constants;
+using MeChat.Domain.Shared.Constants;
 
 namespace MeChat.Infrastructure.RealTime.DependencyInjection.Extentions;
 public static class ServiceCollectionExtention

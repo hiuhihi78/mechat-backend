@@ -2,6 +2,7 @@ using Asp.Versioning;
 using MeChat.API.DependencyInjection;
 using MeChat.API.DependencyInjection.Extentions;
 using MeChat.API.Middlewares;
+using MeChat.Domain.DependencyInjection.Extentions;
 using MeChat.Application.DependencyInjection.Extentions;
 using MeChat.Infrastructure.Dapper.DependencyInjection.Extentions;
 using MeChat.Infrastructure.DistributedCache.DependencyInjection.Extentions;
@@ -52,6 +53,9 @@ public class Program
                 options.SubstituteApiVersionInUrl = true;
             });
 
+        // Add configuration Domain services
+        builder.Services.AddDomainServices();
+
         // Add configuration API services
         builder.Services.AddApiServices();
 
@@ -85,7 +89,7 @@ public class Program
         //Add controller API (Presentation)
         builder.Services
             .AddControllers()
-            .AddApplicationPart(Presentation.AssemblyReference.Assembly);
+            .AddApplicationPart(MeChat.Presentation.AssemblyReference.Assembly);
 
         //Add Middlewares
         builder.Services.AddTransient<ExceptionHandlingMiddleware>();

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using MeChat.Common.Shared.Constants;
 using MeChat.Domain.Abstractions.Data.Dapper;
-using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
+using MeChat.Domain.Shared.Constants;
 using MeChat.Domain.Shared.Responses;
 using MeChat.Domain.UseCases.V1.Notification;
 

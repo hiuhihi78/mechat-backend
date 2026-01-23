@@ -1,7 +1,6 @@
 ﻿using MassTransit;
 using MeChat.Domain.Abstractions.MessageBroker.Email;
 using MeChat.Domain.Abstractions.Services.External;
-using System.Transactions;
 
 namespace MeChat.Infrastructure.MessageBroker.Producer.Services;
 public class MessageBrokerProducerEmail : IMessageBrokerProducerEmail

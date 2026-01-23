@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using MeChat.Common.Shared.Constants;
 using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 using MeChat.Domain.Abstractions.RealTime;
+using MeChat.Domain.Shared.Constants;
 using MeChat.Domain.UseCases.V1.User;
 using MeChat.Infrastructure.RealTime.Hubs;
 using System.Text.Json;

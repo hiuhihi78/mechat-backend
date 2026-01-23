@@ -1,5 +1,5 @@
-﻿using MeChat.Common.Shared.Constants;
-using MeChat.Domain.Entities;
+﻿using MeChat.Domain.Entities;
+using MeChat.Domain.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,10 +1,9 @@
-﻿using MeChat.Common.Shared.Authentication;
+﻿using MeChat.Domain.Shared.Authentication;
 using MeChat.Domain.Abstractions.Services.External;
 using MeChat.Infrastructure.Service.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 
 namespace MeChat.Infrastructure.Service.DependencyInjection.Extentions;
 public static class JwtExtention

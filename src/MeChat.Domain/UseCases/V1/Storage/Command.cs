@@ -1,4 +1,4 @@
-﻿using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+﻿using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 using Microsoft.AspNetCore.Http;
 
 namespace MeChat.Domain.UseCases.V1.Storage;

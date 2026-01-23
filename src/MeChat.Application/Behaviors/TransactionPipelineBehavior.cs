@@ -1,5 +1,5 @@
 ﻿using MeChat.Domain.Abstractions.Data.EntityFramework;
-using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents.Annotations;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base.Annotations;
 using MediatR;
 
 namespace MeChat.Application.Behaviors;

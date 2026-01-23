@@ -1,9 +1,7 @@
 ﻿using MeChat.Domain.Abstractions.Data.Dapper;
 using MeChat.Domain.Abstractions.Data.Dapper.Repositories;
-using MeChat.Domain.Abstractions.Services.User;
 using MeChat.Infrastructure.Dapper.Repositories;
 using MeChat.Infrastructure.Data.Dapper.Repositories;
-using MeChat.Infrastructure.Data.Dapper.Services.User;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MeChat.Infrastructure.Dapper.DependencyInjection.Extentions;
@@ -17,7 +15,5 @@ public static class ServiceCollectionExtentions
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<INotificationRepository, NotificationRepository>();
         services.AddTransient<IUserSocialRepository, UserSocialRepository>();
-
-        services.AddScoped<IUserUniquenessChecker, UserUniquenessChecker>();
     }
 }

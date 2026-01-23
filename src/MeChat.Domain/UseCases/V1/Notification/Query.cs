@@ -1,4 +1,4 @@
-﻿using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+﻿using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 using MeChat.Domain.Shared.Responses;
 
 namespace MeChat.Domain.UseCases.V1.Notification;

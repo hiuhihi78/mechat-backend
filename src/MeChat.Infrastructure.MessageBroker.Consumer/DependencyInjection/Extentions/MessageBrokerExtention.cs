@@ -49,7 +49,7 @@ public static class MessageBrokerExtention
     #region RabbitMq
     private static void AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
     {
-        var messageBrokerConfig = new Common.Shared.Configurations.MessageBroker();
+        var messageBrokerConfig = new  Domain.Shared.Configurations.MessageBroker();
         configuration.GetSection(nameof(MessageBroker)).Bind(messageBrokerConfig);
 
         RabbitMq rabbitMqConfiguration = messageBrokerConfig.RabbitMq;
@@ -75,7 +75,7 @@ public static class MessageBrokerExtention
     #region AzureServiceBus
     private static void AzureServiceBus(this IServiceCollection services, IConfiguration configuration)
     {
-        var messageBrokerConfig = new Common.Shared.Configurations.MessageBroker();
+        var messageBrokerConfig = new Domain.Shared.Configurations.MessageBroker();
         configuration.GetSection(nameof(MessageBroker)).Bind(messageBrokerConfig);
 
         AzureServiceBus azureServiceBusConfig = messageBrokerConfig.AzureServiceBus;

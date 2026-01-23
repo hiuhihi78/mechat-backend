@@ -1,5 +1,4 @@
-﻿using MeChat.Application.Abstractions.Emails;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace MeChat.Application.DependencyInjection.Extentions;
 public static class ServiceCollectionExtensions
@@ -14,8 +13,6 @@ public static class ServiceCollectionExtensions
 
         // Add application utils
         services.AddApplicationUtils();
-
-        services.AddSingleton<IEmailTemplateService, EmailTemplateService>();
 
         return services;
     }

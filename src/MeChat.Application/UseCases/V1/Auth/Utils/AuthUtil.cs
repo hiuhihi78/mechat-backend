@@ -1,6 +1,6 @@
-﻿using MeChat.Common.Shared.Constants;
-using MeChat.Domain.Abstractions.Services.External;
+﻿using MeChat.Domain.Abstractions.Services.External;
 using MeChat.Domain.Shared.ApplicationConfiguration;
+using MeChat.Domain.Shared.Constants;
 using MeChat.Domain.Shared.Responses;
 using MeChat.Domain.UseCases.V1.Auth;
 using Microsoft.Extensions.Configuration;

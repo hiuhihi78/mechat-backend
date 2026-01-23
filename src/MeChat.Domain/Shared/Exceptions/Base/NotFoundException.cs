@@ -1,4 +1,4 @@
-﻿using MeChat.Common.Shared.Constants;
+﻿using MeChat.Domain.Shared.Constants;
 
 namespace MeChat.Domain.Shared.Exceptions.Base;
 public class NotFoundException : DomainException

@@ -1,5 +1,5 @@
 ﻿using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 using MeChat.Domain.Shared.Responses;
 using MeChat.Domain.UseCases.V1.Notification;
 using Microsoft.EntityFrameworkCore;

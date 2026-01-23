@@ -1,4 +1,4 @@
-﻿namespace MeChat.Common.Shared.Constants;
+﻿namespace MeChat.Domain.Shared.Constants;
 public partial class AppConstants
 {
     public class RealTime

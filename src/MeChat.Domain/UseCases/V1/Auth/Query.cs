@@ -1,5 +1,5 @@
-﻿using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
-using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents.Annotations;
+﻿using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base.Annotations;
 
 namespace MeChat.Domain.UseCases.V1.Auth;
 public class Query

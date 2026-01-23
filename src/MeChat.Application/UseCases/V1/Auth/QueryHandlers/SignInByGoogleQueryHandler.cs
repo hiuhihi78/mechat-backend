@@ -1,11 +1,10 @@
 ﻿using Google.Apis.Auth;
 using MeChat.Application.UseCases.V1.Auth.Utils;
-using MeChat.Common.Shared.Constants;
-using MeChat.Domain.Abstractions.Data.Dapper;
-using MeChat.Domain.Abstractions.Data.EntityFramework;
 using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 using MeChat.Domain.Entities;
+using MeChat.Domain.Shared.Constants;
+using MeChat.Domain.Shared.Exceptions.Base;
 using MeChat.Domain.Shared.Responses;
 using MeChat.Domain.UseCases.V1.Auth;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +13,7 @@ namespace MeChat.Application.UseCases.V1.Auth.QueryHandlers;
 public class SignInByGoogleQueryHandler : IQueryHandler<Query.SignInByGoogle, Response.Authenticated>
 {
     private readonly IConfiguration configuration;
-    private readonly IUnitOfWork unitOfWorkDapper;
+    private readonly Domain.Abstractions.Data.Dapper.IUnitOfWork unitOfWorkDapper;
     private readonly Domain.Abstractions.Data.EntityFramework.IUnitOfWork unitOfWorkEF;
     private readonly IRepositoryBase<Domain.Entities.User, Guid> userRepository;
     private readonly IRepository<UserSocial> userSocialRepository;
@@ -22,7 +21,7 @@ public class SignInByGoogleQueryHandler : IQueryHandler<Query.SignInByGoogle, Re
 
     public SignInByGoogleQueryHandler(
         IConfiguration configuration,
-        IUnitOfWork unitOfWorkDapper,
+        Domain.Abstractions.Data.Dapper.IUnitOfWork unitOfWorkDapper,
         Domain.Abstractions.Data.EntityFramework.IUnitOfWork unitOfWorkEF, 
         IRepositoryBase<Domain.Entities.User, Guid> userRepository, 
         IRepository<UserSocial> userSocialRepository,
@@ -38,37 +37,43 @@ public class SignInByGoogleQueryHandler : IQueryHandler<Query.SignInByGoogle, Re
 
     public async Task<Result<Response.Authenticated>> Handle(Query.SignInByGoogle request, CancellationToken cancellationToken)
     {
-        //Check Google token
-        GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(request.GoogleToken);
-        if(payload == null) 
-            return Result.UnAuthentication<Response.Authenticated>("Invalid google token!");
-
-        //Check user's email existed
-        var user = await unitOfWorkDapper.Users.GetUserByAccountSocial(payload.Subject, AppConstants.Social.Google);
-        if(user != null)
+        GoogleJsonWebSignature.Payload payload;
+        try
         {
-            return await authUtil.GenerateToken(user);
+            payload = await GoogleJsonWebSignature.ValidateAsync(request.GoogleToken);
+        }
+        catch
+        {
+            throw new UnAuthenticationException("Invalid google token!");
         }
 
-        //New User
-        var newUser = Domain.Entities.User.CreateForTest(
+        if (payload is null)
+            throw new UnAuthenticationException("Invalid google token!");
+
+        var existed = await unitOfWorkDapper.Users.GetUserByAccountSocial(
+            payload.Subject, AppConstants.Social.Google);
+
+        if (existed is not null)
+        {
+            existed.EnsureCanSignIn();
+            return await authUtil.GenerateToken(existed);
+        }
+
+        var newUser = Domain.Entities.User.CreateFromSocialLogin(
+            id: Guid.NewGuid(),
             email: payload.Email,
             fullname: payload.Name,
             avatar: payload.Picture,
-            defaultRoleId: AppConstants.Role.User
-        );
+            defaultRoleId: AppConstants.Role.User);
+
+        var userSocial = UserSocial.Create(
+            userId: newUser.Id,
+            socialId: AppConstants.Social.Google,
+            accountSocialId: payload.Subject);
 
         userRepository.Add(newUser);
-        await unitOfWorkEF.SaveChangeAsync();
-
-        //New UserSocial
-        UserSocial userSocial = new UserSocial
-        {
-            UserId = newUser.Id,
-            SocialId = AppConstants.Social.Google,
-            AccountSocialId = payload.Subject,
-        };
         userSocialRepository.Add(userSocial);
+
         await unitOfWorkEF.SaveChangeAsync();
 
         return await authUtil.GenerateToken(newUser);

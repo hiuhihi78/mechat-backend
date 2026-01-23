@@ -1,4 +1,4 @@
-﻿using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+﻿using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 using MeChat.Domain.Abstractions.Services.External;
 using MeChat.Domain.Shared.Responses;
 using MeChat.Domain.UseCases.V1.Storage;

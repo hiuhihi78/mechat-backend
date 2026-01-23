@@ -1,4 +1,7 @@
 ﻿using MeChat.Domain.Abstractions.Enitites;
+using MeChat.Domain.Shared.Constants;
+using MeChat.Domain.Shared.Exceptions.Base;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Auth;
 
 namespace MeChat.Domain.Entities;
 public class User :EntityBase<Guid>, IDateTracking
@@ -47,14 +50,59 @@ public class User :EntityBase<Guid>, IDateTracking
             RoleId = defaultRoleId,
             Status = -1
         };
+
+        // Raise domain event inside aggregate root
+        user.AddDomainEvent(new DomainEvents.UserSignedUpDomainEvent(user.Id, user.Email));
+
         return user;
     }
 
+    public void EnsureCanSignIn()
+    {
+        if (Status != AppConstants.User.Status.Activate)
+            throw new DomainException(
+                code: AppConstants.ResponseCodes.User.Banned,
+                message: "User has been banned!",
+                type: DomainExceptionType.Unknown
+            );
+    }
 
+    public void EnsurePasswordMatches(string rawPassword)
+    {
+        if (!string.Equals(Password, rawPassword))
+            throw new DomainException(
+                code: AppConstants.ResponseCodes.User.WrongPassword,
+                message: "Password incorrect!",
+                type: DomainExceptionType.Unknown
+            );
+    }
 
+    public static User CreateFromSocialLogin(
+        Guid id,
+        string email,
+        string fullname,
+        string? avatar,
+        int defaultRoleId)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            throw new DomainException(
+                code: AppConstants.ResponseCodes.ValidationError,
+                message: "Email is required",
+                type: DomainExceptionType.ValidationError);
 
+        return new User
+        {
+            Id = id,
+            Email = email.Trim(),
+            Fullname = fullname?.Trim() ?? email.Trim(),
+            Avatar = avatar,
+            RoleId = defaultRoleId,
+            Status = AppConstants.User.Status.Activate,
+            CreatedDate = DateTimeOffset.UtcNow
+        };
+    }
 
-
+    #region Test
     public static User CreateForTest(
         string email,
         string fullname,
@@ -99,5 +147,6 @@ public class User :EntityBase<Guid>, IDateTracking
             Status = status
         };
     }
+    #endregion
 
 }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MeChat.Domain.Abstractions.Data.Dapper;
-using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 using MeChat.Domain.Shared.Responses;
 using MeChat.Domain.UseCases.V1.User;
 

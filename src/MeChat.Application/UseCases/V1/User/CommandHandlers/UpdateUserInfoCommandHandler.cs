@@ -1,10 +1,10 @@
-﻿using MeChat.Common.Shared.Constants;
+﻿using MeChat.Domain.Shared.Constants;
 using MeChat.Domain.Abstractions.Data.EntityFramework;
 using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Domain.Abstractions.MessageBroker.Messages.DomainEvents;
 using MeChat.Domain.Abstractions.Services.External;
 using MeChat.Domain.Shared.Responses;
 using MeChat.Domain.UseCases.V1.User;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 
 namespace MeChat.Application.UseCases.V1.User.CommandHandlers;
 public class UpdateUserInfoCommandHandler : ICommandHandler<Command.UpdateUserInfo>

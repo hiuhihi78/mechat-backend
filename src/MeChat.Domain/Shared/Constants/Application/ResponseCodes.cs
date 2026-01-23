@@ -1,4 +1,4 @@
-﻿namespace MeChat.Common.Shared.Constants;
+﻿namespace MeChat.Domain.Shared.Constants;
 
 public partial class AppConstants
 {
@@ -19,6 +19,7 @@ public partial class AppConstants
 
             public const string WrongPassword = "2001";
             public const string UsernameExisted = "2002";
+            public const string EmailExisted = "2003";
 
             public const string FriendBlock = "3001";
         }
