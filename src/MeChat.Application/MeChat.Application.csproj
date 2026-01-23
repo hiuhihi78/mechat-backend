@@ -1,7 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
+    <Authors>hiuhihi78</Authors>
+    <Version>1.0.0.1</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -22,13 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MeChat.Common\MeChat.Common.csproj" />
     <ProjectReference Include="..\MeChat.Domain\MeChat.Domain.csproj" />
     <ProjectReference Include="..\MeChat.Infrastructure.Data.Dapper\MeChat.Infrastructure.Data.Dapper.csproj" />
     <ProjectReference Include="..\MeChat.Infrastructure.DistributedCache\MeChat.Infrastructure.DistributedCache.csproj" />
     <ProjectReference Include="..\MeChat.Infrastructure.RealTime\MeChat.Infrastructure.RealTime.csproj" />
     <ProjectReference Include="..\MeChat.Infrastructure.Service\MeChat.Infrastructure.Service.csproj" />
-    <ProjectReference Include="..\MeChat.Persistence\MeChat.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

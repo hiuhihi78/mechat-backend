@@ -1,4 +1,4 @@
-﻿using MeChat.Common.MessageBroker.Email;
+﻿using MeChat.Domain.Abstractions.MessageBroker.Email;
 using MeChat.Infrastructure.MessageBroker.Consumer.Abtractions.Messages;
 using MediatR;
 

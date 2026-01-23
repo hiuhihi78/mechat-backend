@@ -1,7 +1,7 @@
-﻿using MeChat.Common.Shared.Response;
-using MeChat.Common.Shared.Exceptions.Base;
-using System.Text.Json;
-using MeChat.Common.Shared.Commons;
+﻿using System.Text.Json;
+using MeChat.Domain.Shared.Commons;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.Shared.Exceptions.Base;
 
 namespace MeChat.API.Middlewares;
 

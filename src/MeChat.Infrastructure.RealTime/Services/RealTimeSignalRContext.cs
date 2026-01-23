@@ -1,4 +1,4 @@
-﻿using MeChat.Common.Abstractions.RealTime;
+﻿using MeChat.Domain.Abstractions.RealTime;
 using Microsoft.AspNetCore.SignalR;
 
 namespace MeChat.Infrastructure.RealTime.Services;

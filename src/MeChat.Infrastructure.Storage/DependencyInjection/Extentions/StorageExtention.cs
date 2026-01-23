@@ -1,4 +1,5 @@
-﻿using MeChat.Common.Abstractions.Services;
+﻿using MeChat.Domain.Abstractions.Services.External;
+using MeChat.Domain.Shared.Configurations;
 using MeChat.Infrastructure.Storage.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,17 +9,17 @@ public static class StorageExtention
 {
 
     #region Add Storage
-    public static void AddStorage(this IServiceCollection services, IConfiguration configuration)
+    public static void AddInfrastructureStorage(this IServiceCollection services, IConfiguration configuration)
     {
-        Common.Shared.Configurations.DistributedStorage distributedStorageConfig = new();
-        configuration.GetSection(nameof(Common.Shared.Configurations.DistributedStorage)).Bind(distributedStorageConfig);
+        DistributedStorage distributedStorageConfig = new();
+        configuration.GetSection(nameof(DistributedStorage)).Bind(distributedStorageConfig);
 
         switch(distributedStorageConfig.Mode) 
         {
-            case nameof(Common.Shared.Configurations.DistributedStorage.AwsS3):
+            case nameof(DistributedStorage.AwsS3):
                 services.AddAmazonS3();
                 break;
-            case nameof(Common.Shared.Configurations.DistributedStorage.AzureBlobStorage):
+            case nameof(DistributedStorage.AzureBlobStorage):
                 break;
             default:
                 services.AddAmazonS3();

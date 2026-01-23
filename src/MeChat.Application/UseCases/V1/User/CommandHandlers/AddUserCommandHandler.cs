@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.User;
+using MeChat.Domain.Shared.Constants;
+using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.User;
 using System.Threading.Tasks;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 
 namespace MeChat.Application.UseCases.V1.User.CommandHandlers;
 public class AddUserCommandHandler : ICommandHandler<Command.AddUser>
@@ -27,6 +27,6 @@ public class AddUserCommandHandler : ICommandHandler<Command.AddUser>
         user.RoleId = AppConstants.Role.User;
 
         userRepository.Add(user);
-        return Task.FromResult<Result>(Result.Success());
+        return Task.FromResult(Result.Success());
     }
 }

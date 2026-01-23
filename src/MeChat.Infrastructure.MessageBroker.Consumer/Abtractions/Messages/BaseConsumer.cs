@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using MeChat.Common.Abstractions.Messages.InterationEvents;
+using MeChat.Domain.Abstractions.MessageBroker.Messages.InterationEvents;
 using MediatR;
 
 namespace MeChat.Infrastructure.MessageBroker.Consumer.Abtractions.Messages;

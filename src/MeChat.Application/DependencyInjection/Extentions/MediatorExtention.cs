@@ -20,6 +20,6 @@ public static class MediatorExtention
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionPipelineBehavior<,>));
 
         //Add Fluent Validation from Common Assembly
-        services.AddValidatorsFromAssembly(Common.AssemblyReference.Assembly, includeInternalTypes: true);
+        services.AddValidatorsFromAssembly(Domain.AssemblyReference.Assembly, includeInternalTypes: true);
     }
 }

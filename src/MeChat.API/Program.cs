@@ -1,15 +1,18 @@
-using MeChat.Persistence.DependencyInjection.Extentions;
-using MeChat.Infrastructure.Dapper.DependencyInjection.Extentions;
-using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Asp.Versioning;
+using MeChat.API.DependencyInjection;
 using MeChat.API.DependencyInjection.Extentions;
-using MeChat.Application.DependencyInjection.Extentions;
 using MeChat.API.Middlewares;
+using MeChat.Domain.DependencyInjection.Extentions;
+using MeChat.Application.DependencyInjection.Extentions;
+using MeChat.Infrastructure.Dapper.DependencyInjection.Extentions;
 using MeChat.Infrastructure.DistributedCache.DependencyInjection.Extentions;
-using System.Text.Json.Serialization;
+using MeChat.Infrastructure.MessageBroker.Producer.DependencyInjection.Extentions;
+using MeChat.Infrastructure.Persistence.DependencyInjection.Extentions;
+using MeChat.Infrastructure.RealTime.DependencyInjection.Extentions;
 using MeChat.Infrastructure.Service.DependencyInjection.Extentions;
 using MeChat.Infrastructure.Storage.DependencyInjection.Extentions;
-using MeChat.Infrastructure.MessageBroker.Producer.DependencyInjection.Extentions;
-using MeChat.Infrastructure.RealTime.DependencyInjection.Extentions;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using System.Text.Json.Serialization;
 
 namespace MeChat.API;
 
@@ -33,50 +36,60 @@ public class Program
 
         //Add configuration Api versioning
         builder.Services
-            .AddApiVersioning(options => options.ReportApiVersions = true)
+            .AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new UrlSegmentApiVersionReader(),
+                    new QueryStringApiVersionReader("api-version"),
+                    new HeaderApiVersionReader("X-Api-Version")
+                );
+            })
             .AddApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'VVV";
                 options.SubstituteApiVersionInUrl = true;
             });
 
-        //Add application utils
-        builder.Services.AddApplicationUtils();
+        // Add configuration Domain services
+        builder.Services.AddDomainServices();
 
-        //Add messagebroker (Infrastructure.MessageBroker)
-        builder.Services.AddMessageBroker(builder.Configuration);
+        // Add configuration API services
+        builder.Services.AddApiServices();
 
-        //Add configuration MediatR(Application)
-        builder.Services.AddMediator();
+        // Add configuration Application services
+        builder.Services.AddApplicationServices();
 
-        //Add configuration AutoMapper(Application)
-        builder.Services.AddMapperObjects();
+        // Add configuration Infrastructure.Dapper
+        builder.Services.AddInfrastructureDapper();
 
-        //Add configuration storage
-        builder.Services.AddStorage(builder.Configuration);
+        // Add configuration Infrastructure.DistributedCache
+        builder.Services.AddInfrastructureDistributedCache(builder.Configuration);
 
-        //Add configuration connect SQL Server with Dapper(Infrastructure.Dapper)
-        builder.Services.AddSqlServerDapper();
-
-        //Add configuration Jwt Authentication (Infrastructure.Jwt)
-        builder.Services.AddJwtAuthentication(builder.Configuration);
-
-        //Add configuration Jwt Service (Infrastructure.Jwt)
-        builder.Services.AddJwtService();
+        //Add configuration Infrastructure.MessageBroker
+        builder.Services.AddInfrastructureMessageBroker(builder.Configuration);
 
         // Add Message broker producer for email //Infrastructure.MessageBroker.Producer.Email
         builder.Services.AddMessageBrokerProducerEmail();
 
-        //Add configuration Redis(Infrastructure.Redis)
-        builder.Services.AddDistributedCache(builder.Configuration);
-        
-        //Add configuration connect SQL Server with EF(Infrastructure.Persistence)
-        builder.Services.AddSqlServerEntityFramwork();
+        //Add configuration Infrastructure.Storage
+        builder.Services.AddInfrastructureStorage(builder.Configuration);
 
-        //Add controller API (Infrastructure.Presentation)
+        //Add configuration Jwt Authentication
+        builder.Services.AddJwtAuthentication(builder.Configuration);
+
+        //Add configuration Jwt Servic
+        builder.Services.AddJwtService();
+
+        //Add configuration Persistence
+        builder.Services.AddPersistence();
+
+        //Add controller API (Presentation)
         builder.Services
             .AddControllers()
-            .AddApplicationPart(Presentation.AssemblyReference.Assembly);
+            .AddApplicationPart(MeChat.Presentation.AssemblyReference.Assembly);
 
         //Add Middlewares
         builder.Services.AddTransient<ExceptionHandlingMiddleware>();

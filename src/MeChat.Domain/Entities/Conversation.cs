@@ -1,5 +1,4 @@
-﻿using MeChat.Domain.Abstractions;
-using MeChat.Domain.Abstractions.Enitites;
+﻿using MeChat.Domain.Abstractions.Enitites;
 
 namespace MeChat.Domain.Entities;
 public class Conversation : EntityBase<Guid>, IDateTracking, IUserTracking
@@ -11,7 +10,7 @@ public class Conversation : EntityBase<Guid>, IDateTracking, IUserTracking
     public Guid? AdministratorId { get; set; }
 
     public DateTimeOffset CreatedDate { get; set; }
-    public DateTimeOffset? ModifiledDate { get; set; }
+    public DateTimeOffset? ModifiedDate { get; set; }
     public Guid CreatedBy { get; set; }
     public Guid? ModifiedBy { get; set; }
 

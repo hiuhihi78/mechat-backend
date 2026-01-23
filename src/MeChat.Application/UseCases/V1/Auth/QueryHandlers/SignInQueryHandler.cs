@@ -1,9 +1,10 @@
 ﻿using MeChat.Application.UseCases.V1.Auth.Utils;
-using MeChat.Common.Abstractions.Data.Dapper;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.Auth;
+using MeChat.Domain.Abstractions.Data.Dapper;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
+using MeChat.Domain.Shared.Constants;
+using MeChat.Domain.Shared.Exceptions.Base;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.Auth;
 
 namespace MeChat.Application.UseCases.V1.Auth.QueryHandlers;
 public class SignInQueryHandler : IQueryHandler<Query.SignIn, Response.Authenticated>
@@ -12,7 +13,7 @@ public class SignInQueryHandler : IQueryHandler<Query.SignIn, Response.Authentic
     private readonly AuthUtil authUtil;
 
     public SignInQueryHandler(
-        IUnitOfWork unitOfWork, 
+        IUnitOfWork unitOfWork,
         AuthUtil authUtil)
     {
         this.unitOfWork = unitOfWork;
@@ -21,13 +22,20 @@ public class SignInQueryHandler : IQueryHandler<Query.SignIn, Response.Authentic
 
     public async Task<Result<Response.Authenticated>> Handle(Query.SignIn request, CancellationToken cancellationToken)
     {
-        var user = await unitOfWork.Users.GetUserByUsernameAndPassword(request.Username, request.Password);
-        if (user == null)
-            return Result.NotFound<Response.Authenticated>("Username or Password incorrect!");
+        var user = await unitOfWork.Users.GetByUsernameAsync(request.Username, cancellationToken);
 
-        //Check User
-        if (user.Status != AppConstants.User.Status.Activate)
-            return Result.Initialization<Response.Authenticated>(AppConstants.ResponseCodes.User.Banned, "User has been banned!", false, null);
+        if (user is null)
+        {
+            throw new DomainException(
+                code: AppConstants.ResponseCodes.User.WrongPassword,
+                message: "Username or Password incorrect!",
+                type: DomainExceptionType.Unknown
+            );
+        }
+
+        user.EnsureCanSignIn();
+
+        user.EnsurePasswordMatches(request.Password);
 
         return await authUtil.GenerateToken(user);
     }

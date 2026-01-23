@@ -1,5 +1,4 @@
-﻿using MeChat.Domain.Abstractions;
-using MeChat.Domain.Abstractions.Enitites;
+﻿using MeChat.Domain.Abstractions.Enitites;
 
 namespace MeChat.Domain.Entities;
 public class Message : EntityBase<Guid>, IDateTracking
@@ -11,7 +10,7 @@ public class Message : EntityBase<Guid>, IDateTracking
     public bool IsDelete { get; set; }
 
     public DateTimeOffset CreatedDate { get; set; }
-    public DateTimeOffset? ModifiledDate { get; set; }
+    public DateTimeOffset? ModifiedDate { get; set; }
 
     public virtual User? User { get; set;}
     public virtual Conversation? Conversation { get; set; }

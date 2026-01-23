@@ -1,6 +1,6 @@
-﻿using MeChat.Common.Abstractions.Messages.InterationEvents;
-using MeChat.Common.Abstractions.Services;
-using MeChat.Common.MessageBroker.Email;
+﻿using MeChat.Domain.Abstractions.MessageBroker.Email;
+using MeChat.Domain.Abstractions.MessageBroker.Messages.InterationEvents;
+using MeChat.Domain.Abstractions.Services.External;
 
 namespace MeChat.Infrastructure.MessageBroker.Consumer.UseCases.Commands;
 

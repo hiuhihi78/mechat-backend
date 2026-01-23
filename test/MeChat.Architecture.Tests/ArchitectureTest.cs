@@ -1,4 +1,5 @@
 using FluentAssertions;
+using MeChat.Infrastructure.Persistence;
 using NetArchTest.Rules;
 
 namespace MeChat.Architecture.Tests;
@@ -141,7 +142,7 @@ public class ArchitectureTest
     public void PersistenceShouldNotHaveDependencyOnOtherProjects()
     {
         // Arrange
-        var assembly = Persistence.AssemblyReference.Assembly;
+        var assembly = AssemblyReference.Assembly;
 
         var otherProjects = new[]
         {

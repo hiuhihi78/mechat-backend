@@ -1,15 +1,15 @@
-﻿using MeChat.Common.Abstractions.Data.EntityFramework;
-using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.User;
+﻿using MeChat.Domain.Shared.Constants;
+using MeChat.Domain.Abstractions.Data.EntityFramework;
+using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.User;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 
 namespace MeChat.Application.UseCases.V1.User.CommandHandlers;
 public class UpdateUserPasswordCommandHandler : ICommandHandler<Command.UpdateUserPassword>
 {
     private readonly IRepositoryBase<Domain.Entities.User, Guid> userRepository;
-    private readonly Common.Abstractions.Data.EntityFramework.IUnitOfWork unitOfWorkEF;
+    private readonly IUnitOfWork unitOfWorkEF;
 
     public UpdateUserPasswordCommandHandler(
         IRepositoryBase<Domain.Entities.User, Guid> userRepository,

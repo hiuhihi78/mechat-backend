@@ -1,4 +1,4 @@
-﻿using MeChat.Common.Abstractions.Services;
+﻿using MeChat.Domain.Abstractions.Services.External;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
