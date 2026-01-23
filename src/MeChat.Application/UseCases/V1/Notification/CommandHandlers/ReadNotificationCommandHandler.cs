@@ -1,7 +1,7 @@
-﻿using MeChat.Common.Abstractions.Data.EntityFramework.Repositories;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.Notification;
+﻿using MeChat.Domain.Abstractions.Data.EntityFramework.Repositories;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.Notification;
 
 namespace MeChat.Application.UseCases.V1.Notification.CommandHandlers;
 public class ReadNotificationCommandHandler : ICommandHandler<Command.ReadNotification>

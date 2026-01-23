@@ -1,12 +1,12 @@
 using MeChat.Application.UseCases.V1.Auth.Utils;
-using MeChat.Common.Abstractions.Data.Dapper;
-using MeChat.Common.Abstractions.Messages.DomainEvents;
-using MeChat.Common.Abstractions.Services;
-using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Response;
-using MeChat.Common.UseCases.V1.Auth;
+using MeChat.Domain.Shared.Constants;
+using MeChat.Domain.Abstractions.Data.Dapper;
+using MeChat.Domain.Abstractions.Services.External;
+using MeChat.Domain.Shared.Responses;
+using MeChat.Domain.UseCases.V1.Auth;
 using Newtonsoft.Json;
-using static MeChat.Common.Shared.Exceptions.AuthExceptions;
+using static MeChat.Domain.Shared.Exceptions.AuthExceptions;
+using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
 
 namespace MeChat.Application.UseCases.V1.Auth.QueryHandlers;
 public class GetRefreshTokenQueryHandler : IQueryHandler<Query.RefreshToken, Response.Authenticated>

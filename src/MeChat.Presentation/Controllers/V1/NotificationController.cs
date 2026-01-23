@@ -1,12 +1,10 @@
-﻿using MeChat.Common.Shared.Constants;
-using MeChat.Common.UseCases.V1.Notification;
+﻿using MeChat.Domain.Shared.Constants;
+using MeChat.Domain.UseCases.V1.Notification;
 using MeChat.Presentation.Abstractions;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace MeChat.Presentation.Controllers.V1;
 public class NotificationController : ApiControllerBase

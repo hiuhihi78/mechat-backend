@@ -1,4 +1,4 @@
-﻿using MeChat.Common.Abstractions.Services;
+﻿using MeChat.Domain.Abstractions.Services.External;
 using MeChat.Infrastructure.MessageBroker.Producer.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

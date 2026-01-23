@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
-using MeChat.Common.Shared.Extentions;
-using MeChat.Common.UseCases.V1.User;
+using MeChat.Domain.Shared.Extentions;
+using MeChat.Domain.UseCases.V1.User;
 using MeChat.Presentation.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

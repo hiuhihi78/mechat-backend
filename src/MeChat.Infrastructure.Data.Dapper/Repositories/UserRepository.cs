@@ -1,9 +1,10 @@
 ﻿using Dapper;
-using MeChat.Common.Abstractions.Data.Dapper.Repositories;
-using MeChat.Common.Shared.Constants;
-using MeChat.Common.Shared.Enumerations;
+using MeChat.Domain.Abstractions.Data.Dapper.Repositories;
 using MeChat.Domain.Entities;
+using MeChat.Domain.Shared.Constants;
+using MeChat.Domain.Shared.Enumerations;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeChat.Infrastructure.Dapper.Repositories;
 public class UserRepository : IUserRepository
@@ -213,4 +214,48 @@ public class UserRepository : IUserRepository
         return result;
     }
     #endregion
+
+    #region GetUserByUsername
+    public async Task<User?> GetUserByUsername(string username)
+    {
+        var sql = "SELECT * FROM [User] WHERE Username = @Username";
+        using var conn = context.GetConnection();
+        await conn.OpenAsync();
+        return await conn.ExecuteScalarAsync<User>(sql, new { Username = username });
+    }
+    #endregion
+
+    #region GetByUsernameAsync
+    public async Task<User?> GetByUsernameAsync(string username, CancellationToken ct = default)
+    {
+        const string sql = @"
+        SELECT TOP 1 *
+        FROM [dbo].[User]
+        WHERE [Username] = @Username";
+
+        using var connection = context.GetConnection();
+        await connection.OpenAsync(ct);
+
+        return await connection.QuerySingleOrDefaultAsync<User>(sql, new { Username = username });
+    }
+    #endregion
+
+    #region EmailExistsAsync
+    public async Task<bool> EmailExistsAsync(string email, CancellationToken ct = default)
+    {
+        const string sql = "SELECT COUNT(1) FROM [dbo].[User] WHERE [Email] = @Email";
+        using var conn = this.context.GetConnection();
+        await conn.OpenAsync(ct);
+        return await conn.ExecuteScalarAsync<int>(sql, new { Email = email }) > 0;
+    }
+    #endregion
+
+
+    public async Task<bool> UsernameExistsAsync(string username, CancellationToken ct = default)
+    {
+        const string sql = "SELECT COUNT(1) FROM [dbo].[User] WHERE [Username] = @Username";
+        using var conn = this.context.GetConnection();
+        await conn.OpenAsync(ct);
+        return await conn.ExecuteScalarAsync<int>(sql, new { Username = username }) > 0;
+    }
 }

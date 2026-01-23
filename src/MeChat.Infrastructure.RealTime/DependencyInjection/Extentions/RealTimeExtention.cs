@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MeChat.Common.Abstractions.RealTime;
 using MeChat.Infrastructure.RealTime.Services;
+using MeChat.Domain.Abstractions.RealTime;
 
 namespace MeChat.Infrastructure.RealTime.DependencyInjection.Extentions;
 

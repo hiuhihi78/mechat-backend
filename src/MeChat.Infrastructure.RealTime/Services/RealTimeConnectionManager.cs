@@ -1,5 +1,5 @@
-﻿using MeChat.Common.Abstractions.RealTime;
-using MeChat.Common.Abstractions.Services;
+﻿using MeChat.Domain.Abstractions.RealTime;
+using MeChat.Domain.Abstractions.Services.External;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 

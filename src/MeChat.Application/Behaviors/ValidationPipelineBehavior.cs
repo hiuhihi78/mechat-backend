@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using MeChat.Common.Shared.Response;
+using MeChat.Domain.Shared.Responses;
 using MediatR;
 
 namespace MeChat.Application.Behaviors;

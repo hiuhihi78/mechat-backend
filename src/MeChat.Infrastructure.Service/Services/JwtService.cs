@@ -1,7 +1,6 @@
-﻿using MeChat.Common.Abstractions.Services;
-using MeChat.Common.Shared.ApplicationConfiguration;
-using MeChat.Common.Shared.Authentication;
-using MeChat.Common.Shared.Exceptions;
+﻿using MeChat.Domain.Abstractions.Services.External;
+using MeChat.Domain.Shared.ApplicationConfiguration;
+using MeChat.Domain.Shared.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -56,7 +55,7 @@ internal class JwtService : IJwtService
             if (string.IsNullOrEmpty(token))
                 throw new AuthExceptions.AccessTokenInValid();
 
-            var tokenValidationParameters = new ApplicationTokenValidationParameters(configuration);
+            var tokenValidationParameters = new Domain.Shared.Authentication.ApplicationTokenValidationParameters(configuration);
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
@@ -97,7 +96,7 @@ internal class JwtService : IJwtService
         if (string.IsNullOrEmpty(accessToken))
             throw new AuthExceptions.AccessTokenInValid();
 
-        var tokenValidationParameters = new ApplicationTokenValidationParameters(configuration);
+        var tokenValidationParameters = new Domain.Shared.Authentication.ApplicationTokenValidationParameters(configuration);
 
         try
         {

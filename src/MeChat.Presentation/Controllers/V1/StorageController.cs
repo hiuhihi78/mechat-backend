@@ -1,4 +1,4 @@
-﻿using MeChat.Common.UseCases.V1.Storage;
+﻿using MeChat.Domain.UseCases.V1.Storage;
 using MeChat.Presentation.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Http;

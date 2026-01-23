@@ -1,5 +1,4 @@
-﻿using MeChat.Domain.Abstractions;
-using MeChat.Domain.Abstractions.Enitites;
+﻿using MeChat.Domain.Abstractions.Enitites;
 
 namespace MeChat.Domain.Entities;
 public class Friend : Entity, IDateTracking
@@ -10,7 +9,7 @@ public class Friend : Entity, IDateTracking
     public int Status { get; set; }
     public int OldStatus { get; set; }
     public DateTimeOffset CreatedDate { get; set; }
-    public DateTimeOffset? ModifiledDate { get; set; }
+    public DateTimeOffset? ModifiedDate { get; set; }
 
     public virtual User? UserFirst { get; set; }
     public virtual User? UserSecond { get; set; }

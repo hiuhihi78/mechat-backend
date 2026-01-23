@@ -1,5 +1,5 @@
-﻿using MeChat.Common.Shared.Constants;
-using MeChat.Common.UseCases.V1.Auth;
+﻿using MeChat.Domain.Shared.Constants;
+using MeChat.Domain.UseCases.V1.Auth;
 using MeChat.Presentation.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

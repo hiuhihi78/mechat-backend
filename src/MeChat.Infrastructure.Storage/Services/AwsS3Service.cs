@@ -2,20 +2,21 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
-using MeChat.Common.Abstractions.Services;
-using MeChat.Common.Shared.Exceptions;
+using MeChat.Domain.Abstractions.Services.External;
+using MeChat.Domain.Shared.Configurations;
+using MeChat.Domain.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace MeChat.Infrastructure.Storage.Services;
 public class AwsS3Service : IStorageService
 {
-    private readonly Common.Shared.Configurations.DistributedStorage distributedStorage = new();
+    private readonly DistributedStorage distributedStorage = new();
     private readonly IAmazonS3 awsS3Client;
 
     public AwsS3Service(IConfiguration configuration)
     {
-        configuration.GetSection(nameof(Common.Shared.Configurations.DistributedStorage)).Bind(distributedStorage);
+        configuration.GetSection(nameof(DistributedStorage)).Bind(distributedStorage);
         this.awsS3Client = new AmazonS3Client(
             awsAccessKeyId: distributedStorage.AwsS3.AwsAccessKeyId,
             awsSecretAccessKey: distributedStorage.AwsS3.AwsSecretAccessKey,

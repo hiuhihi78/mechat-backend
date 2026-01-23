@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MeChat.Infrastructure.Service.DependencyInjection.Configurations;
-using MeChat.Common.Abstractions.Services;
+using MeChat.Domain.Abstractions.Services.External;
 
 namespace MeChat.Infrastructure.Service.Services;
 public class EmailService : IEmailService
