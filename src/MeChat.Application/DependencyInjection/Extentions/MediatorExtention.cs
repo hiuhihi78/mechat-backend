@@ -13,6 +13,9 @@ public static class MediatorExtention
             configs.RegisterServicesFromAssembly(AssemblyReference.Assembly);
         });
 
+        //Add DomainExceptionHandlingBehavior's Middleware for catching domain error
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DomainExceptionHandlingBehavior<,>));
+
         //Add MediatR's Middleware for Fluent Validation models
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
 
