@@ -2,7 +2,7 @@
 using MeChat.Domain.Abstractions.Services.User;
 
 
-namespace MeChat.Domain.Services.User;
+namespace MeChat.Domain.Policies.User;
 public class UserPolicy : IUserPolicy
 {
     private readonly IUserRepository repo;

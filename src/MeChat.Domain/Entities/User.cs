@@ -62,8 +62,7 @@ public class User :EntityBase<Guid>, IDateTracking
         if (Status != AppConstants.User.Status.Activate)
             throw new DomainException(
                 code: AppConstants.ResponseCodes.User.Banned,
-                message: "User has been banned!",
-                type: DomainExceptionType.Unknown
+                message: "User has been banned!"
             );
     }
 
@@ -72,8 +71,7 @@ public class User :EntityBase<Guid>, IDateTracking
         if (!string.Equals(Password, rawPassword))
             throw new DomainException(
                 code: AppConstants.ResponseCodes.User.WrongPassword,
-                message: "Password incorrect!",
-                type: DomainExceptionType.Unknown
+                message: "Password incorrect!"
             );
     }
 

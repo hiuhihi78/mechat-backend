@@ -1,14 +1,13 @@
 ﻿using MassTransit;
 using MeChat.Domain.Abstractions.MessageBroker.Email;
-using MeChat.Domain.Abstractions.Services.External;
 
 namespace MeChat.Infrastructure.MessageBroker.Producer.Services;
-public class MessageBrokerProducerEmail : IMessageBrokerProducerEmail
+public class EmailPublisher : IEmailPublisher
 {
     private readonly IPublishEndpoint publishEndpoint;
     private readonly IBus bus;
 
-    public MessageBrokerProducerEmail(IPublishEndpoint publishEndpoint, IBus bus)
+    public EmailPublisher(IPublishEndpoint publishEndpoint, IBus bus)
     {
         this.publishEndpoint = publishEndpoint;
         this.bus = bus;

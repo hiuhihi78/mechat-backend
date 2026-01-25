@@ -68,11 +68,8 @@ public class Program
         // Add configuration Infrastructure.DistributedCache
         builder.Services.AddInfrastructureDistributedCache(builder.Configuration);
 
-        //Add configuration Infrastructure.MessageBroker
-        builder.Services.AddInfrastructureMessageBroker(builder.Configuration);
-
-        // Add Message broker producer for email //Infrastructure.MessageBroker.Producer.Email
-        builder.Services.AddMessageBrokerProducerEmail();
+        // Add Infrastructure.MessageBroker.Producer
+        builder.Services.AddMessageBrokerProducer(builder.Configuration);
 
         //Add configuration Infrastructure.Storage
         builder.Services.AddInfrastructureStorage(builder.Configuration);

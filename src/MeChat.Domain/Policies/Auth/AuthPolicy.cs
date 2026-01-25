@@ -3,7 +3,7 @@ using MeChat.Domain.Abstractions.Services.Auth;
 using MeChat.Domain.Shared.Constants;
 using MeChat.Domain.Shared.Exceptions.Base;
 
-namespace MeChat.Domain.Services.Auth;
+namespace MeChat.Domain.Policies.Auth;
 
 public sealed class AuthPolicy : IAuthPolicy
 {
