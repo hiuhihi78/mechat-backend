@@ -28,8 +28,7 @@ public class SignInQueryHandler : IQueryHandler<Query.SignIn, Response.Authentic
         {
             throw new DomainException(
                 code: AppConstants.ResponseCodes.User.WrongPassword,
-                message: "Username or Password incorrect!",
-                type: DomainExceptionType.Unknown
+                message: "Username or Password incorrect!"
             );
         }
 
