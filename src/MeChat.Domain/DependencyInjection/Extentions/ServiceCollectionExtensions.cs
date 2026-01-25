@@ -1,5 +1,7 @@
 ﻿using MeChat.Domain.Abstractions.Services.Auth;
-using MeChat.Domain.Services.Auth;
+using MeChat.Domain.Abstractions.Services.User;
+using MeChat.Domain.Policies.Auth;
+using MeChat.Domain.Policies.User;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MeChat.Domain.DependencyInjection.Extentions;
@@ -9,6 +11,7 @@ public static class ServiceCollectionExtensions
     {
         // Domain policy
         services.AddScoped<IAuthPolicy, AuthPolicy>();
+        services.AddScoped<IUserPolicy, UserPolicy>();
 
         return services;
     }

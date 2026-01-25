@@ -1,4 +1,4 @@
-﻿using MeChat.Domain.Abstractions.Services.External;
+﻿using MeChat.Domain.Abstractions.MessageBroker.Email;
 using MeChat.Infrastructure.MessageBroker.Producer.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,8 +7,12 @@ namespace MeChat.Infrastructure.MessageBroker.Producer.DependencyInjection.Exten
 public static class ServiceCollectionExtentions
 {
 
-    public static void AddMessageBrokerProducerEmail(this IServiceCollection services)
+    public static void AddMessageBrokerProducer(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddTransient<IMessageBrokerProducerEmail, MessageBrokerProducerEmail>();
+        // Add Message Broker
+        services.AddInfrastructureMessageBroker(configuration);
+
+        // Add Publisher
+        services.AddTransient<IEmailPublisher, EmailPublisher>();
     }
 }

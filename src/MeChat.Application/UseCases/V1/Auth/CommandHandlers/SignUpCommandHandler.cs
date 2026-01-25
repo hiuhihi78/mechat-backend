@@ -12,37 +12,25 @@ using Microsoft.Extensions.Configuration;
 namespace MeChat.Application.UseCases.V1.Auth.CommandHandlers;
 public class SignUpCommandHandler : ICommandHandler<Command.SignUp>
 {
-    private readonly IConfiguration configuration;
     private readonly IRepositoryBase<Domain.Entities.User, Guid> userReposiory;
-    private readonly IMessageBrokerProducerEmail messageBrokerProducerEmail;
     private readonly IUnitOfWork unitOfWork;
     private readonly IAuthPolicy authPolicy;
 
-    private readonly AuthUtil authUtil;
-
     public SignUpCommandHandler
-        (IConfiguration configuration,
-        IRepositoryBase<Domain.Entities.User, Guid> userReposiory,
-        IMessageBrokerProducerEmail messageBrokerProducerEmail,
+        (IRepositoryBase<Domain.Entities.User, Guid> userReposiory,
         IUnitOfWork unitOfWork,
-        IAuthPolicy authPolicy,
-        AuthUtil authUtil)
+        IAuthPolicy authPolicy)
     {
-        this.configuration = configuration;
         this.userReposiory = userReposiory;
-        this.authUtil = authUtil;
         this.unitOfWork = unitOfWork;
-        this.messageBrokerProducerEmail = messageBrokerProducerEmail;
         this.authPolicy = authPolicy;
     }
 
     public async Task<Result> Handle(Command.SignUp request, CancellationToken cancellationToken)
     {
 
-        // Rule check (Domain policy)
         await authPolicy.EnsureCanSignUpAsync(request.Email, request.Username, cancellationToken);
 
-        // Create domain entity
         var user = Domain.Entities.User.SignUp(
             id: Guid.NewGuid(),
             username: request.Username,
@@ -51,7 +39,6 @@ public class SignUpCommandHandler : ICommandHandler<Command.SignUp>
             fullname: request.Username,
             defaultRoleId: AppConstants.Role.User);
 
-        // Persist
         userReposiory.Add(user);
         await unitOfWork.SaveChangeAsync();
         return Result.Success();

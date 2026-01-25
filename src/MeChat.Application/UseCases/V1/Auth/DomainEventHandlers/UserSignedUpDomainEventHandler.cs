@@ -1,6 +1,6 @@
 ﻿using MeChat.Application.UseCases.V1.Auth.Utils;
+using MeChat.Domain.Abstractions.MessageBroker.Email;
 using MeChat.Domain.Abstractions.Messages.DomainEvents.Base;
-using MeChat.Domain.Abstractions.Services.External;
 using Microsoft.Extensions.Configuration;
 using static MeChat.Domain.Abstractions.Messages.DomainEvents.Auth.DomainEvents;
 
@@ -9,12 +9,12 @@ public sealed class UserSignedUpDomainEventHandler : IDomainEventHandler<UserSig
 {
     private readonly IConfiguration _config;
     private readonly AuthUtil _authUtil;
-    private readonly IMessageBrokerProducerEmail _email;
+    private readonly IEmailPublisher _email;
 
     public UserSignedUpDomainEventHandler(
         IConfiguration config,
         AuthUtil authUtil,
-        IMessageBrokerProducerEmail email)
+        IEmailPublisher email)
     {
         _config = config;
         _authUtil = authUtil;
