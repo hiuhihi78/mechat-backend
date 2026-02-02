@@ -1,0 +1,78 @@
+version: "3.9"
+
+services:
+  # ================== NGINX ==================
+  nginx:
+    image: nginx:alpine
+    container_name: mechat-nginx-dev
+    ports:
+        - "8080:80"
+    volumes:
+        - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+        - mechat-api
+    networks:
+        - mechat-dev-net
+
+  # ================== API ==================
+  mechat-api:
+    build: .
+    container_name: mechat-api-dev
+    expose:
+      - "5000"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:5000
+    depends_on:
+      - mssql
+      - redis
+      - rabbitmq
+    networks:
+      - mechat-dev-net
+
+  # ================== MSSQL ==================
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mechat-mssql-dev
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "MeChat@2024"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_dev_data:/var/opt/mssql
+    networks:
+      - mechat-dev-net
+
+  # ================== REDIS ==================
+  redis:
+    image: redis:7
+    container_name: mechat-redis-dev
+    command: redis-server --requirepass mechat
+    ports:
+      - "6379:6379"
+    networks:
+      - mechat-dev-net
+
+  # ================== RABBITMQ ==================
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: mechat-rabbitmq-dev
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: me-chat
+    networks:
+      - mechat-dev-net
+
+# ================== VOLUMES ==================
+volumes:
+  mssql_dev_data:
+
+# ================== NETWORK ==================
+networks:
+  mechat-dev-net:
+    driver: bridge
