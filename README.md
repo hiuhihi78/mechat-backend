@@ -16,9 +16,7 @@ This repository contains the backend services for **MeChat**, including API, per
 ### 2. Add a Migration
 
 ```bash
-dotnet ef migrations add <MigrationName> \
-  --project MeChat.Infrastructure.Persistence/MeChat.Infrastructure.Persistence.csproj \
-  --startup-project MeChat.API/MeChat.API.csproj
+dotnet ef migrations add <MigrationName> --project MeChat.Infrastructure.Persistence/MeChat.Infrastructure.Persistence.csproj --startup-project MeChat.API/MeChat.API.csproj
 ```
 
 > 🔹 Replace `<MigrationName>` with a meaningful name describing your change.
@@ -26,9 +24,7 @@ dotnet ef migrations add <MigrationName> \
 ### 3. Apply Migration to Database
 
 ```bash
-dotnet ef database update \
-  --project MeChat.Infrastructure.Persistence/MeChat.Infrastructure.Persistence.csproj \
-  --startup-project MeChat.API/MeChat.API.csproj
+dotnet ef database update --project MeChat.Infrastructure.Persistence/MeChat.Infrastructure.Persistence.csproj --startup-project MeChat.API/MeChat.API.csproj
 ```
 
 ---
@@ -61,13 +57,25 @@ Docker is used to run external dependencies such as message brokers, databases, 
 ### Development Environment
 
 ```bash
-docker compose -f docker-compose.develop.yml --verbose up
+docker compose down -v
+docker builder prune -f
+docker compose -f docker-compose.dev.yml up --build
 ```
 
 ### Production Environment
 
 ```bash
-docker compose -f docker-compose.production.yml --verbose up
+docker compose down -v
+docker builder prune -f
+docker compose -f docker-compose.dev.yml up --build
+```
+
+### Connect MSSQL
+```bash
+Server name: localhost,1433
+Authentication:	SQL Server Authentication
+Login: sa
+Password: <password in docker-compose>
 ```
 
 ---
@@ -105,7 +113,10 @@ docker logs -f <container_name>
 
 ```bash
 # Access Redis CLI
-docker exec -it mechat-redis redis-cli
+docker exec -it <compose name> redis-cli
+
+#Authentication
+Auth <password>
 
 # Set a key
 SET my_key "hello"
