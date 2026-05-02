@@ -1,0 +1,18 @@
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+
+COPY MeChat.sln ./
+COPY src ./src
+COPY test ./test
+
+RUN dotnet restore MeChat.sln
+RUN dotnet publish "src/MeChat.API/MeChat.API.csproj" -c Release -o /app/publish --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
+WORKDIR /app
+
+ENV ASPNETCORE_URLS=http://0.0.0.0:5000
+EXPOSE 5000
+
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet","MeChat.API.dll"]

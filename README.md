@@ -105,6 +105,15 @@ docker rmi <image_name>
 
 # View container logs
 docker logs -f <container_name>
+
+# Removes all stopped containers, all networks not used by at least one container
+docker system prune
+
+# Removes all unused images
+docker system prune -a
+
+# Removes anonymous volumes
+docker system prune --volumes
 ```
 
 ---
